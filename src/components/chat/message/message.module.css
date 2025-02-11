@@ -1,0 +1,38 @@
+.messageContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .senderName {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .messageBubble {
+    max-width: 90%;
+    padding: 10px;
+    border-radius: 15px;
+    word-wrap: break-word;
+    background-color: #f1f1f1;
+    color: black;
+  }
+  
+  .user .messageBubble {
+    background-color: #e1f7d5;
+    align-self: flex-start;
+  }
+  
+  .assistant .messageBubble {
+    background-color: #d1e7ff;
+    align-self: flex-end;
+  }
+
+.user .senderName {
+    align-self: flex-start;
+  }
+  
+  .assistant .senderName {
+    align-self: flex-end;
+  }
+  

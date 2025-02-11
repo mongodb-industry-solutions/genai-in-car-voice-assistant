@@ -1,0 +1,9 @@
+.chatContainer {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 10px;
+    background: #222;
+    border-radius: 10px;
+  }
+  
