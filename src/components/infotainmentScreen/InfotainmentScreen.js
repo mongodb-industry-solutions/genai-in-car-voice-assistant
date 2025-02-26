@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ChatView from "@/components/chatView/ChatView";
+import NavigationView from "@/components/navigationView/NavigationView";
+import OptionsView from "@/components/optionsView/OptionsView";
 import styles from "./infotainmentScreen.module.css";
 
-const InfotainmentScreen = ({ children }) => {
+const InfotainmentScreen = () => {
   const [time, setTime] = useState("--:--");
+  const [currentView, setCurrentView] = useState("navigation");
 
   useEffect(() => {
     const updateClock = () => {
@@ -36,15 +40,39 @@ const InfotainmentScreen = ({ children }) => {
       <div className={styles.topCenter}>{time}</div>
 
       {/* Screen Content */}
-      <div className={styles.content}>{children}</div>
+      <div
+        className={`${styles.content} ${
+          currentView === "chat" ? styles.sharedScreen : styles.fullScreen
+        }`}
+      >
+        {currentView === "chat" && (
+          <>
+            <ChatView /> <NavigationView isFullScreen={false} />
+          </>
+        )}
+        {currentView === "navigation" && <NavigationView isFullScreen={true} />}
+        {currentView === "options" && <OptionsView />}
+      </div>
 
       {/* Bottom Icons */}
       <div className={styles.bottomIcons}>
-        <span className="material-icons">grid_view</span>
-        <span className="material-icons">explore</span>
+        <span
+          className="material-icons"
+          onClick={() => setCurrentView("options")}
+        >
+          grid_view
+        </span>
+        <span
+          className="material-icons"
+          onClick={() => setCurrentView("navigation")}
+        >
+          explore
+        </span>
         <span className="material-icons">call</span>
         <span className="material-icons">directions_car</span>
-        <span className="material-icons">mic</span>
+        <span className="material-icons" onClick={() => setCurrentView("chat")}>
+          mic
+        </span>
       </div>
     </div>
   );

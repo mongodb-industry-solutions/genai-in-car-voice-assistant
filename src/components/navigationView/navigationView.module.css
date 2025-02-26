@@ -1,0 +1,11 @@
+.imageContainer {
+  position: relative; /* Needed for Next.js Image layout="fill" */
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Ensures image does not exceed bounds */
+  border-radius: 10px;
+}
+
+.image {
+  object-position: center;
+}

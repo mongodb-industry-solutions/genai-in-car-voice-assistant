@@ -1,8 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Material+Icons');
 
 .frame {
-  max-height: 60vh;
-  min-height: 100px;
+  height: 60vh;
   aspect-ratio: 16 / 9;
   border-radius: 20px;
   background: #111;
@@ -17,11 +16,18 @@
 
 .content {
     display: grid;
-    grid-template-columns: 2fr 1fr;
     gap: 10px;
     width: 100%;
     height: 100%;
   }
+
+.fullScreen {
+  grid-template-columns: 1fr;
+}
+
+.sharedScreen {
+  grid-template-columns: 2fr 1fr;
+}
 
 .material-icons {
   font-size: 24px;

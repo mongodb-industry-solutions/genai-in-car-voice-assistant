@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Deploy
+Makefile
+policy.json
+ecs-params.yml
+docker-compose-ecs.yml

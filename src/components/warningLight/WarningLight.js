@@ -15,9 +15,9 @@ const WarningLight = () => {
         <Image
           src={isOn ? "/low-oil-pressure-on.png" : "/low-oil-pressure-off.png"}
           alt="Warning Light"
-          layout="intrinsic"
           width={60}
           height={60}
+          className={styles.warningImage}
         />
       </div>
     </div>

@@ -16,3 +16,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow to make it floating */
   overflow: hidden; /* Ensures the image doesn't overflow outside the bubble */
 }
+
+.warningImage {
+  object-fit: contain;
+}
