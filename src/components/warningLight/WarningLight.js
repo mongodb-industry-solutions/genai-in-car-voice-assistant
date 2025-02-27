@@ -1,9 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./warningLight.module.css";
 
-const WarningLight = () => {
-  const [isOn, setIsOn] = useState(true);
+const WarningLight = ({ isPlaying }) => {
+  const [isOn, setIsOn] = useState(false);
+
+  useEffect(() => {
+    if (isPlaying) {
+      const timer = setTimeout(() => {
+        setIsOn(true);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsOn(false);
+    }
+  }, [isPlaying]);
 
   const handleClick = () => {
     setIsOn(!isOn);

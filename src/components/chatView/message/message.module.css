@@ -5,34 +5,34 @@
   }
   
   .senderName {
-    font-weight: bold;
     margin-bottom: 5px;
   }
   
   .messageBubble {
-    max-width: 90%;
-    padding: 10px;
+    max-width: 60%;
+    padding: 20px;
     border-radius: 15px;
     word-wrap: break-word;
     background-color: #f1f1f1;
-    color: black;
   }
   
   .user .messageBubble {
-    background-color: #e1f7d5;
-    align-self: flex-start;
+    background-color: #777777;
+    align-self: flex-end;
   }
   
   .assistant .messageBubble {
-    background-color: #d1e7ff;
-    align-self: flex-end;
+    background-color: #4d4d4d;
+    align-self: flex-start;
   }
 
 .user .senderName {
-    align-self: flex-start;
+    align-self: flex-end;
+    margin-right: 20px;
   }
   
   .assistant .senderName {
-    align-self: flex-end;
+    align-self: flex-start;
+    margin-left: 20px;
   }
   

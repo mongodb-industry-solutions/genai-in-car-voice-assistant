@@ -1,4 +1,5 @@
 import React from "react";
+import { Body, Label } from "@leafygreen-ui/typography";
 import styles from "./message.module.css";
 
 const Message = ({ message }) => {
@@ -9,10 +10,16 @@ const Message = ({ message }) => {
         isUser ? styles.user : styles.assistant
       }`}
     >
-      <div className={styles.senderName}>
+      <Label className={styles.senderName} baseFontSize={13}>
         {message.sender === "user" ? "Eddy" : "Leafy Assistant"}
-      </div>
-      <div className={styles.messageBubble}>{message.text}</div>
+      </Label>
+      <Body
+        className={styles.messageBubble}
+        baseFontSize={16}
+        weight={"medium"}
+      >
+        {message.text}
+      </Body>
     </div>
   );
 };

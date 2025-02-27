@@ -45,3 +45,6 @@ Makefile
 policy.json
 ecs-params.yml
 docker-compose-ecs.yml
+
+# videos
+**.mp4

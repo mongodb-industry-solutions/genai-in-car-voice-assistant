@@ -20,18 +20,4 @@
     gap: 20px;
   }
   
-  .button {
-    background: #00aaff;
-    border: none;
-    padding: 12px 24px;
-    font-size: 18px;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .button:hover {
-    background: #0088cc;
-  }
   

@@ -6,9 +6,12 @@ import NavigationView from "@/components/navigationView/NavigationView";
 import OptionsView from "@/components/optionsView/OptionsView";
 import styles from "./infotainmentScreen.module.css";
 
-const InfotainmentScreen = () => {
+const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
   const [time, setTime] = useState("--:--");
   const [currentView, setCurrentView] = useState("navigation");
+  const [simulationMode, setSimulationMode] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isRecalculating, setIsRecalculating] = useState(false);
 
   useEffect(() => {
     const updateClock = () => {
@@ -47,30 +50,59 @@ const InfotainmentScreen = () => {
       >
         {currentView === "chat" && (
           <>
-            <ChatView /> <NavigationView isFullScreen={false} />
+            <ChatView
+              setIsRecalculating={setIsRecalculating}
+              setCurrentView={setCurrentView}
+            />{" "}
+            <NavigationView
+              isFullScreen={false}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentTime={currentTime}
+              setCurrentTime={setCurrentTime}
+              isRecalculating={isRecalculating}
+            />
           </>
         )}
-        {currentView === "navigation" && <NavigationView isFullScreen={true} />}
-        {currentView === "options" && <OptionsView />}
+        {currentView === "navigation" && (
+          <NavigationView
+            isFullScreen={true}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            currentTime={currentTime}
+            setCurrentTime={setCurrentTime}
+            isRecalculating={isRecalculating}
+          />
+        )}
+        {currentView === "options" && (
+          <OptionsView
+            simulationMode={simulationMode}
+            setSimulationMode={setSimulationMode}
+            setCurrentView={setCurrentView}
+          />
+        )}
       </div>
 
       {/* Bottom Icons */}
       <div className={styles.bottomIcons}>
         <span
-          className="material-icons"
+          className={`material-icons ${styles["clickable-icon"]}`}
           onClick={() => setCurrentView("options")}
         >
           grid_view
         </span>
         <span
-          className="material-icons"
+          className={`material-icons ${styles["clickable-icon"]}`}
           onClick={() => setCurrentView("navigation")}
         >
           explore
         </span>
-        <span className="material-icons">call</span>
-        <span className="material-icons">directions_car</span>
-        <span className="material-icons" onClick={() => setCurrentView("chat")}>
+        <span className={`material-icons`}>call</span>
+        <span className={`material-icons`}>directions_car</span>
+        <span
+          className={`material-icons ${styles["clickable-icon"]}`}
+          onClick={() => setCurrentView("chat")}
+        >
           mic
         </span>
       </div>
