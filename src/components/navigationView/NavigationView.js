@@ -1,8 +1,15 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { Spinner } from "@leafygreen-ui/loading-indicator";
+import dynamic from "next/dynamic";
 import styles from "./navigationView.module.css";
+
+const Spinner = dynamic(
+  () => import("@leafygreen-ui/loading-indicator").then((mod) => mod.Spinner),
+  {
+    ssr: false,
+  }
+);
 
 const NavigationView = ({
   isFullScreen,
@@ -31,7 +38,7 @@ const NavigationView = ({
         setShowSuccessMessage(false);
       }, 5000);
     }
-  }, [isRecalculating]);
+  }, [isRecalculating, isLoading]);
 
   const handleStartNavigation = () => {
     setIsPlaying(true);

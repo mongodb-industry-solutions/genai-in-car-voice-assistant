@@ -1,5 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Message from "./message/Message";
+import SuggestedAnswer from "./suggestedAnswer/SuggestedAnswer";
+import { SAMPLE_CONVERSATION } from "../../lib/const";
 import styles from "./chatView.module.css";
 
 const ChatView = ({ setIsRecalculating, setCurrentView }) => {
@@ -9,132 +11,86 @@ const ChatView = ({ setIsRecalculating, setCurrentView }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [suggestedAnswer, setSuggestedAnswer] = useState(null);
 
-  const messages = [
-    {
-      sender: "assistant",
-      text: "Hi, I'm Leafy. How can I help you today?",
-    },
-    { sender: "user", text: "Hey, what’s this red light on my dashboard?" },
-    {
-      sender: "assistant",
-      text: "That’s the engine oil pressure warning It means your oil level might be low. Want me to guide you on what to do?",
-    },
-    { sender: "user", text: "Yes, please." },
-    {
-      sender: "assistant",
-      text: "First, pull over safely and turn off the engine. Then, check the oil level and top it up if needed. If the light stays on, you should get the car checked.",
-    },
-    {
-      sender: "assistant",
-      text: "Want me to add the nearest service station to your route?",
-    },
-    { sender: "user", text: "Yes, that’d be great!" },
-    { sender: "assistant", tool: "recalculateRoute" },
-    {
-      sender: "assistant",
-      text: "Done! I’ve set your route to the closest service station. Drive safely! 🚗💨",
-    },
-    {
-      sender: "assistant",
-      text: "Is there anything else I can assist you with today?",
-    },
-    {
-      sender: "user",
-      text: "No, that's all. Thanks!",
-    },
-    { sender: "assistant", tool: "closeChat" },
-  ];
+  const messages = SAMPLE_CONVERSATION;
 
-  const playAudio = (index) => {
+  const playAudio = useCallback((index) => {
     const audioFile = `/audios/${index}.wav`;
     const audio = new Audio(audioFile);
     audio.play();
-  };
+  }, []);
 
   // Function to simulate typing effect
-  const typeMessage = (message, index) => {
-    return new Promise((resolve) => {
-      setIsTyping(true);
+  const typeMessage = useCallback(
+    (message, index) => {
+      return new Promise((resolve) => {
+        setIsTyping(true);
+        if (message.sender === "assistant") playAudio(index);
 
-      if (message.sender === "assistant") {
-        playAudio(index);
-      }
+        const words = message.text.split(" ");
+        let wordIndex = 0;
 
-      const words = message.text.split(" ");
-      let wordIndex = 0;
-      const interval = setInterval(() => {
-        setMessagesToShow((prevMessages) => {
-          const updatedMessages = [...prevMessages];
-          updatedMessages[index] = {
-            ...updatedMessages[index],
-            text: words.slice(0, wordIndex + 1).join(" "),
-          };
-          return updatedMessages;
-        });
+        const interval = setInterval(() => {
+          setMessagesToShow((prev) => {
+            const updated = [...prev];
+            if (updated.length > 0) {
+              updated[updated.length - 1].text = words
+                .slice(0, wordIndex + 1)
+                .join(" ");
+            }
+            return updated;
+          });
 
-        wordIndex += 1;
-        if (wordIndex === words.length) {
-          clearInterval(interval);
-          setIsTyping(false);
-          resolve();
+          wordIndex += 1;
+          if (wordIndex === words.length) {
+            clearInterval(interval);
+            setIsTyping(false);
+            resolve();
+          }
+        }, 300);
+      });
+    },
+    [playAudio]
+  );
+
+  const handleTool = useCallback(
+    (toolName) => {
+      return new Promise((resolve) => {
+        switch (toolName) {
+          case "recalculateRoute":
+            setIsRecalculating(true);
+            setTimeout(() => {
+              setIsRecalculating(false);
+              resolve();
+            }, 2000);
+            break;
+          case "closeChat":
+            setTimeout(() => {
+              setCurrentView("navigation");
+              resolve();
+            }, 500);
+            break;
+          default:
+            resolve();
         }
-      }, 300);
-    });
-  };
+      });
+    },
+    [setIsRecalculating, setCurrentView]
+  );
 
-  const handleTool = (toolName) => {
-    return new Promise((resolve) => {
-      switch (toolName) {
-        case "recalculateRoute":
-          setIsRecalculating(true);
-
-          setTimeout(() => {
-            setIsRecalculating(false);
-            resolve(); // Resolve after recalculating
-          }, 2000);
-          break;
-
-        case "closeChat":
-          setTimeout(() => {
-            setCurrentView("navigation");
-            resolve(); // Resolve after closing chat
-          }, 500);
-          break;
-
-        default:
-          console.log(`Tool ${toolName} not implemented yet`);
-          resolve();
-      }
-    });
-  };
-
-  const handleNextMessage = async () => {
+  const handleNextMessage = useCallback(async () => {
     if (messageIndex < messages.length) {
       const newMessage = messages[messageIndex];
 
       if (newMessage.tool) {
         await handleTool(newMessage.tool);
       } else {
-        setMessagesToShow((prevMessages) => [
-          ...prevMessages,
-          { ...newMessage, text: "" },
-        ]);
-        await typeMessage(newMessage, messagesToShow.length);
+        setMessagesToShow((prev) => [...prev, { ...newMessage, text: "" }]); // Add new message first
+
+        await typeMessage(newMessage, messageIndex); // Use messageIndex directly
       }
-      setMessageIndex(messageIndex + 1);
+      setMessageIndex((prev) => prev + 1);
     }
-  };
-
-  const handleSuggestionClick = () => {
-    setSuggestedAnswer(null);
-    handleNextMessage();
-  };
-
-  const handleEnterKey = (e) => {
-    if (e.key === "Enter" && suggestedAnswer && !isTyping) {
-      handleSuggestionClick();
-    }
-  };
+  }, [messageIndex, messages, handleTool, typeMessage]);
 
   useEffect(() => {
     if (messageIndex < messages.length) {
@@ -150,14 +106,7 @@ const ChatView = ({ setIsRecalculating, setCurrentView }) => {
 
       return () => clearTimeout(timeout);
     }
-  }, [messageIndex]);
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleEnterKey);
-    return () => {
-      window.removeEventListener("keydown", handleEnterKey);
-    };
-  }, [suggestedAnswer, isTyping]);
+  }, [messageIndex, messages, handleNextMessage]);
 
   // Scroll to the bottom when messages update
   useEffect(() => {
@@ -169,26 +118,19 @@ const ChatView = ({ setIsRecalculating, setCurrentView }) => {
       {/* Scrollable chat messages */}
       <div className={styles.conversationContainer}>
         {messagesToShow.map((msg, index) => (
-          <Message key={index} message={msg} isTyping={isTyping} />
+          <Message key={index} message={msg} />
         ))}
         <div ref={chatEndRef} />
       </div>
 
-      {/* Fixed suggested answer at the bottom */}
-
-      <div className={styles.suggestedContainer}>
-        {suggestedAnswer && !isTyping && (
-          <>
-            <p className={styles.suggestedText}>Suggested answer:</p>
-            <div
-              className={styles.suggestedAnswer}
-              onClick={handleSuggestionClick}
-            >
-              {suggestedAnswer}
-            </div>
-          </>
-        )}
-      </div>
+      <SuggestedAnswer
+        suggestedAnswer={suggestedAnswer}
+        isTyping={isTyping}
+        onSuggestionClick={() => {
+          setSuggestedAnswer(null);
+          handleNextMessage();
+        }}
+      />
     </div>
   );
 };
