@@ -1,5 +1,6 @@
 import "./globals.css";
 import ThemeProvider from "./ThemeProvider";
+import { VehicleProvider } from "@/context/VehicleContext";
 
 export const metadata = {
   title: "GenAI-Powered In-Car Voice Assistant",
@@ -10,7 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <VehicleProvider>{children}</VehicleProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

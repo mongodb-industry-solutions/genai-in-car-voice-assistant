@@ -5,7 +5,7 @@ import { MongoDBLogo } from "@leafygreen-ui/logo";
 import { useState } from "react";
 import { H1 } from "@leafygreen-ui/typography";
 import InfotainmentScreen from "@/components/infotainmentScreen/InfotainmentScreen";
-import WarningLight from "@/components/warningLight/WarningLight";
+import VehicleDashboard from "@/components/vehicleDashboard/VehicleDashboard";
 
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -16,7 +16,7 @@ export default function Home() {
         <MongoDBLogo />
         <H1>GenAI-Powered In-Car Assistant</H1>
       </div>
-      <WarningLight isPlaying={isPlaying} />
+      <VehicleDashboard isPlaying={isPlaying} />
       <InfotainmentScreen isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
     </div>
   );

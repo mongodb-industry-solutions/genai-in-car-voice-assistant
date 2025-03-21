@@ -92,6 +92,7 @@ const ChatView = ({ setIsRecalculating, setCurrentView }) => {
     }
   }, [messageIndex, messages, handleTool, typeMessage]);
 
+  // Conversation management
   useEffect(() => {
     if (messageIndex < messages.length) {
       const timeout = setTimeout(async () => {
@@ -102,7 +103,7 @@ const ChatView = ({ setIsRecalculating, setCurrentView }) => {
         } else {
           await handleNextMessage();
         }
-      }, 1000); // Always wait 1 second before handling messages
+      }, 1000);
 
       return () => clearTimeout(timeout);
     }

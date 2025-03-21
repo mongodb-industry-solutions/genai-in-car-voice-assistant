@@ -33,3 +33,30 @@ export const SAMPLE_CONVERSATION = [
   },
   { sender: "assistant", tool: "closeChat" },
 ];
+
+export const warningLights = [
+  {
+    name: "Engine Oil",
+    iconOn: "/dashboardLights/engine-oil-on.png",
+    iconOff: "/dashboardLights/engine-oil-off.png",
+    dtcCodes: ["P0520", "P0521", "P0522", "P0523", "P0524"],
+  },
+  {
+    name: "Low Tire Pressure",
+    iconOn: "/dashboardLights/low-tire-pressure-on.png",
+    iconOff: "/dashboardLights/low-tire-pressure-off.png",
+    dtcCodes: ["C0750", "C0755", "C0760", "C0765", "C0770"],
+  },
+  {
+    name: "Brake System",
+    iconOn: "/dashboardLights/brake-system-on.png",
+    iconOff: "/dashboardLights/brake-system-off.png",
+    dtcCodes: ["C1221", "C1223", "C1246", "C1252", "C1362"],
+  },
+  {
+    name: "Battery",
+    iconOn: "/dashboardLights/battery-on.png",
+    iconOff: "/dashboardLights/battery-off.png",
+    dtcCodes: ["P0560", "P0562", "P0563", "U0121", "B1510"],
+  },
+];
