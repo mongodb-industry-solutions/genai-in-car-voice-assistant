@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GenAI-Powered In-Car Voice Assistant
 
-## Getting Started
+This demo showcases an AI-driven voice assistant for vehicles, leveraging **Generative AI** and **MongoDB Atlas** to provide a smarter, more intuitive in-car experience. Unlike traditional voice assistants that are limited to basic commands, this solution enables **context-aware** interactions, **real-time vehicle diagnostics**, and **personalized recommendations** for drivers.
 
-First, run the development server:
+## About the Solution
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🚘 Automotive Innovation is Accelerating
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The industry is rapidly evolving with **EVs, autonomous driving, and advanced safety** features, driving demand for **intelligent in-car assistants**.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 🔊 Current Voice Assistants Are Underutilized
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Most drivers use in-car voice assistants, but they are **limited to basic tasks** like navigation, calls, and simple commands.
 
-## Learn More
+### 🤖 GenAI: The Future of In-Car Assistants
 
-To learn more about Next.js, take a look at the following resources:
+Generative AI transforms **voice assistants from basic command-response systems** into **dynamic, interactive** copilots that:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Understand driver needs in **real time**
+- Provide **relevant insights** using vehicle data
+- Enhance overall **user experience**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How MongoDB Helps
 
-## Deploy on Vercel
+MongoDB Atlas plays a key role in this demo by providing:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Flexible Data Storage:** Easily stores and organizes operational, metadata and vector data, including vehicle signal data, car manual embeddings, and user interactions.
+- **Vector Search for Context-Aware Responses:** Enhances voice assistant capabilities by retrieving relevant sections of the car manual based on user queries.
+- **Real-Time Syncing:** PowerSync’s MongoDB Connector ensures vehicle signal data is always up-to-date, whether on the cloud or in the vehicle.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Learn more about MongoDB [here](https://www.mongodb.com/docs/manual/).
+
+## High-Level Architecture
+
+![High-Level Architecture Diagram](/public/high-level-architecture.png)
+
+## Tech Stack
+
+- **[Next.js](https://nextjs.org/)** for the frontend framework
+- **[MongoDB Atlas](https://www.mongodb.com/atlas)** for the database and vector search
+- **[Google Cloud Platform](https://cloud.google.com/)** for the LLM, speech-to-text, and embeddings
+- **[PowerSync](https://www.powersync.com/)** to persist vehicle data in MongoDB Atlas and keep it in sync
+
+## Prerequisites
+
+Before running the demo, ensure you have the following:
+
+- A **MongoDB Atlas Cluster**
+- **Node.js 20** or higher
+- A **GCP account** with access to Vertex AI APIs
+- A **PowerSync account** for real-time data syncing
+
+## Run it Locally
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+3. Open **http://localhost:3000** in your browser to access the assistant and vehicle dashboard.
+
+## Common Errors
+
+- Ensure you've created an `.env.local` file with valid API keys and environment variables.
+- Check that your MongoDB Atlas cluster is properly set up and accessible.
+- Verify that your Google Cloud Vertex AI and Speech-to-Text APIs are enabled.
