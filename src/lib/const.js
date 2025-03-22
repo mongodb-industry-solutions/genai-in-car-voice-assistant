@@ -34,6 +34,11 @@ export const SAMPLE_CONVERSATION = [
   { sender: "assistant", tool: "closeChat" },
 ];
 
+export const DEFAULT_GREETINGS = {
+  sender: "assistant",
+  text: "Hi! I'm leafy how can I help you today?",
+};
+
 export const warningLights = [
   {
     name: "Engine Oil",
