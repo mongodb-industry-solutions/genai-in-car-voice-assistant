@@ -3,10 +3,11 @@ import {
   HarmCategory,
   VertexAI,
 } from "@google-cloud/vertexai";
+import { SAMPLE_CONVERSATION } from "./const";
 
-const project = "manufacturing-project-425012";
-const location = "us-central1";
-const model = "gemini-1.0-pro";
+const project = process.env.GCP_PROJECT_ID;
+const location = process.env.GCP_LOCATION;
+const model = process.env.VERTEXAI_COMPLETIONS_MODEL;
 
 const vertexAI = new VertexAI({ project, location });
 
@@ -18,11 +19,22 @@ const generativeModel = vertexAI.getGenerativeModel({
       threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
     },
   ],
-  generationConfig: { maxOutputTokens: 256 },
+  generationConfig: { maxOutputTokens: 30 },
   systemInstruction: {
     role: "system",
     parts: [
-      { text: "You are a helpful AI assistant for a car infotainment system." },
+      {
+        text: `
+        You are Leafy, a helpful in car assistant. 
+        The user will be driving while talking to you, so it is important you are very concise in your responses. 
+        Responses must be under 140 characters. 
+        No need to greet the user, the system will greet him before the text is sent to you.
+        
+        This is an example of a conversation you might have with the user:
+
+        ${JSON.stringify(SAMPLE_CONVERSATION, null, 2)}
+        `,
+      },
     ],
   },
 });

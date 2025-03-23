@@ -12,6 +12,7 @@ const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
   const [simulationMode, setSimulationMode] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [isRecalculating, setIsRecalculating] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
     const updateClock = () => {
@@ -54,6 +55,7 @@ const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
               setIsRecalculating={setIsRecalculating}
               setCurrentView={setCurrentView}
               simulationMode={simulationMode}
+              selectedDevice={selectedDevice}
             />{" "}
             <NavigationView
               isFullScreen={false}
@@ -80,6 +82,7 @@ const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
             simulationMode={simulationMode}
             setSimulationMode={setSimulationMode}
             setCurrentView={setCurrentView}
+            setSelectedDevice={setSelectedDevice}
           />
         )}
       </div>

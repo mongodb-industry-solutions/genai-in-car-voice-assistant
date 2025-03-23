@@ -1,5 +1,6 @@
 const useChat = ({ setMessagesToShow, setIsTyping, sessionId }) => {
   const handleLLMResponse = async (userMessage) => {
+    setIsTyping(true);
     let assistantMessageIndex;
     setMessagesToShow((prev) => {
       const updatedMessages = [...prev, { sender: "assistant", text: "" }];
