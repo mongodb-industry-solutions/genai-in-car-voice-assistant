@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       <body>
         <DynamicSystemProvider>
             <ThemeProvider>
-              <VehicleProvider>{children}</VehicleProvider>
+                <VehicleProvider>{children}</VehicleProvider>
             </ThemeProvider>
         </DynamicSystemProvider>
       </body>
