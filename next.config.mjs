@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-        turbo: false,
-    },
     webpack: (config, isServer) => {
         config.experiments = {
             ...config.experiments,
@@ -17,7 +14,6 @@ const nextConfig = {
                 type: "asset/resource", // Adds WebAssembly files to the static assets
             });
         }
-
         return config;
     }
 };

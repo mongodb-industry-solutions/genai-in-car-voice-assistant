@@ -3,7 +3,7 @@
 import AppSchema from '@/lib/powersync/AppSchema';
 import { BackendConnector } from '@/lib/powersync/BackendConnector';
 import { PowerSyncContext } from '@powersync/react';
-import { PowerSyncDatabase, WASQLiteOpenFactory, WASQLiteVFS } from '@powersync/web';
+import { PowerSyncDatabase, WASQLiteOpenFactory } from '@powersync/web';
 import Logger from 'js-logger';
 import React, { Suspense } from 'react';
 
@@ -14,8 +14,7 @@ Logger.setLevel(Logger.DEBUG);
 export const db = new PowerSyncDatabase({
     schema: AppSchema,
     database: new WASQLiteOpenFactory({
-        dbFilename: 'exampleVFS.db',
-        vfs: WASQLiteVFS.OPFSCoopSyncVFS,
+        dbFilename: 'powersync.db',
         flags: {
             enableMultiTabs: typeof SharedWorker !== 'undefined',
             ssrMode: false
@@ -27,10 +26,13 @@ export const db = new PowerSyncDatabase({
 });
 
 const connector = new BackendConnector();
-db.connect(connector);
-console.log(db.currentStatus);
 
 export const SystemProvider = ({ children }) => {
+
+    db.connect(connector).then(() => {
+        console.log('PowerSync connected');
+        console.log(db.currentStatus);
+    });
 
     return (
         <Suspense>
