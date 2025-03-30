@@ -55,7 +55,7 @@ const functionDeclarations = [
             query: {
               type: FunctionDeclarationSchemaType.STRING,
               description:
-                "A query that specifies what information to retrieve from the manual.",
+                "A question that represent an enriched version of what the user wants to retrieve from the manual. It must be in the form of a question.",
             },
           },
           required: ["query"],
@@ -129,7 +129,7 @@ export async function createEmbedding(text) {
     const instances = text
       .split(";")
       .map((e) =>
-        helpers.toValue({ content: e, task_type: "RETRIEVAL_QUERY" })
+        helpers.toValue({ content: e, task_type: "QUESTION_ANSWERING" })
       );
 
     const request = {
