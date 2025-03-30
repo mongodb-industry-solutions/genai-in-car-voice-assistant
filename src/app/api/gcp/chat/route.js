@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { startChatSession } from "@/lib/vertexai";
+import { startChatSession, createEmbedding } from "@/lib/vertexai";
+import { vectorSearch } from "@/lib/mongodb";
 
 export async function POST(req) {
   try {
@@ -32,7 +33,18 @@ export async function POST(req) {
 
             if (name === "consultManual") {
               // Execute consultManual in the backend
-              const manualResponse = "Low Engine Oil Pressure"; //await consultManual(args.query);
+              console.log(
+                "Function call:",
+                JSON.stringify(functionCall, null, 2)
+              );
+
+              const queryEmbedding = await createEmbedding(args.query);
+              const relevantChunks = await vectorSearch(queryEmbedding);
+
+              const formattedChunks = relevantChunks
+                .map((chunk) => chunk.text)
+                .join("\n\n");
+
               const functionResponseParts = [
                 {
                   functionResponse: {
@@ -40,12 +52,17 @@ export async function POST(req) {
                     response: {
                       name,
                       content: {
-                        chunk: "Low Engine Oil Pressure",
+                        chunks: relevantChunks,
                       },
                     },
                   },
                 },
               ];
+
+              console.log(
+                "Manual search results:",
+                JSON.stringify(functionResponseParts, null, 2)
+              );
 
               const followUpResult = await chat.sendMessageStream(
                 functionResponseParts
