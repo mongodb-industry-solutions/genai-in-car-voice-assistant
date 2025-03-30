@@ -1,6 +1,9 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import { useVehicle } from "@/context/VehicleContext";
 
 const useChat = ({
+  setIsRecalculating,
+  setCurrentView,
   setMessagesToShow,
   setIsTyping,
   setIsRecording,
@@ -11,7 +14,14 @@ const useChat = ({
   const processorRef = useRef(null);
   const audioContextRef = useRef(null);
   const audioInputRef = useRef(null);
+  const vehicleRef = useRef(null);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+  const { vehicle } = useVehicle();
+
+  useEffect(() => {
+    vehicleRef.current = vehicle;
+  }, [vehicle]);
 
   const handleLLMResponse = async (userMessage) => {
     setIsTyping(true);
@@ -39,19 +49,108 @@ const useChat = ({
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let partialMessage = "";
+    let isFunctionCallActive = false;
 
     const processStream = async () => {
       const { value, done } = await reader.read();
-      if (done) {
+      if (done && !isFunctionCallActive) {
         setIsTyping(false);
         return;
       }
+
+      const decodedChunk = decoder.decode(value, { stream: true });
+
+      try {
+        const parsedChunk = JSON.parse(decodedChunk);
+        if (parsedChunk.functionCall) {
+          isFunctionCallActive = true;
+          await handleFunctionCall(parsedChunk.functionCall);
+          isFunctionCallActive = false;
+        }
+      } catch {
+        // Normal text response, continue displaying
+        partialMessage += decodedChunk;
+        setMessagesToShow((prevMessages) =>
+          prevMessages.map((msg, index) =>
+            index === assistantMessageIndex
+              ? { ...msg, text: partialMessage }
+              : msg
+          )
+        );
+      }
+
+      processStream();
+    };
+
+    processStream();
+  };
+
+  const handleFunctionCall = async (functionCall) => {
+    return new Promise((resolve) => {
+      switch (functionCall.name) {
+        case "recalculateRoute":
+          setIsRecalculating(true);
+          setTimeout(() => {
+            setIsRecalculating(false);
+            replyToFunctionCall(functionCall.name, {});
+            resolve();
+          }, 2000);
+          break;
+
+        case "closeChat":
+          setTimeout(() => {
+            setCurrentView("navigation");
+            replyToFunctionCall(functionCall.name, {});
+            resolve();
+          }, 500);
+          break;
+
+        case "fetchDTCCodes":
+          const dtcList = vehicleRef.current.Diagnostics.DTCList || [];
+          const dtcCount = vehicleRef.current.Diagnostics.DTCCount || 0;
+          const dtcResponse = { dtcCount, dtcList };
+          replyToFunctionCall(functionCall.name, dtcResponse);
+          resolve();
+          break;
+        default:
+          console.warn("Unknown function call:", functionCall.name);
+          resolve();
+      }
+    });
+  };
+
+  const replyToFunctionCall = async (name, content) => {
+    const functionResponseParts = [
+      { functionResponse: { name, response: { name, content } } },
+    ];
+
+    const response = await fetch("/api/gcp/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: sessionId.current,
+        message: functionResponseParts,
+      }),
+    });
+
+    if (!response.body) {
+      console.error("Error sending function response.");
+      return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let partialMessage = "";
+
+    const processStream = async () => {
+      const { value, done } = await reader.read();
+      if (done) return;
 
       partialMessage += decoder.decode(value, { stream: true });
 
       setMessagesToShow((prevMessages) =>
         prevMessages.map((msg, index) =>
-          index === assistantMessageIndex
+          index === prevMessages.length - 2
             ? { ...msg, text: partialMessage }
             : msg
         )
