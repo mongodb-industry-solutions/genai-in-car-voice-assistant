@@ -37,6 +37,7 @@ const AudioConfigMenu = ({ isOpen, onClose, onConfirm }) => {
         <h3>Select a Microphone</h3>
         <Select
           value={selectedDevice}
+          className={styles.selectDevice}
           aria-label="Select Microphone"
           onChange={(value) => setSelectedDevice(value)}
         >
