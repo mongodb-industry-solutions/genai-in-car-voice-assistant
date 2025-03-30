@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useVehicle } from "@/context/VehicleContext";
+import { dtcCodesDictionary } from "@/lib/const";
 
 const useChat = ({
   setIsRecalculating,
@@ -108,7 +109,18 @@ const useChat = ({
         case "fetchDTCCodes":
           const dtcList = vehicleRef.current.Diagnostics.DTCList || [];
           const dtcCount = vehicleRef.current.Diagnostics.DTCCount || 0;
-          const dtcResponse = { dtcCount, dtcList };
+
+          const enrichedDtcList = dtcList.map((dtcCode) => {
+            const dtc = dtcCodesDictionary.find(
+              (entry) => entry.code === dtcCode
+            );
+            if (dtc) {
+              return `${dtc.code} - ${dtc.description}`;
+            }
+            return dtcCode;
+          });
+
+          const dtcResponse = { dtcCount, dtcList: enrichedDtcList };
           replyToFunctionCall(functionCall.name, dtcResponse);
           resolve();
           break;
