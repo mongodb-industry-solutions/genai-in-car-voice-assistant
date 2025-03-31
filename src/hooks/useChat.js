@@ -16,7 +16,10 @@ const useChat = ({
   const audioContextRef = useRef(null);
   const audioInputRef = useRef(null);
   const vehicleRef = useRef(null);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+  // Web Socket Config
+  const protocol = process.env.NEXT_PUBLIC_ENV === "local" ? "ws" : "wss";
+  const host = typeof window !== "undefined" ? window.location.host : "";
 
   const { vehicle } = useVehicle();
 
@@ -56,6 +59,7 @@ const useChat = ({
       const { value, done } = await reader.read();
       if (done && !isFunctionCallActive) {
         setIsTyping(false);
+        if (partialMessage) await handleTextToSpeech(partialMessage);
         return;
       }
 
@@ -156,7 +160,10 @@ const useChat = ({
 
     const processStream = async () => {
       const { value, done } = await reader.read();
-      if (done) return;
+      if (done) {
+        if (partialMessage) await handleTextToSpeech(partialMessage);
+        return;
+      }
 
       partialMessage += decoder.decode(value, { stream: true });
 
@@ -179,7 +186,9 @@ const useChat = ({
     setMessagesToShow((prev) => [...prev, { sender: "user", text: "" }]);
 
     // Initialize WebSocket connection to the server
-    socketRef.current = new WebSocket(`ws://${appUrl}/api/gcp/speechToText`);
+    socketRef.current = new WebSocket(
+      `${protocol}://${host}/api/gcp/speechToText`
+    );
     socketRef.current.onopen = () => {
       console.log("WebSocket connection established");
     };
@@ -254,6 +263,26 @@ const useChat = ({
     }
     if (audioContextRef.current) {
       audioContextRef.current.close();
+    }
+  };
+
+  const handleTextToSpeech = async (text) => {
+    try {
+      // Make a request to our text-to-speech API to get the audio content
+      const audioResponse = await fetch("/api/gcp/textToSpeech", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      const { audioContent } = await audioResponse.json();
+
+      if (audioContent) {
+        const audio = new Audio(`data:audio/wav;base64,${audioContent}`);
+        audio.play(); // Play the audio
+      }
+    } catch (error) {
+      console.error("Error in text-to-speech:", error);
     }
   };
 

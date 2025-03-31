@@ -33,10 +33,10 @@ export async function POST(req) {
 
             if (name === "consultManual") {
               // Execute consultManual in the backend
-              console.log(
-                "Function call:",
-                JSON.stringify(functionCall, null, 2)
-              );
+              // console.log(
+              //   "Function call:",
+              //   JSON.stringify(functionCall, null, 2)
+              // );
 
               const queryEmbedding = await createEmbedding(args.query);
               const relevantChunks = await vectorSearch(queryEmbedding);
@@ -59,10 +59,10 @@ export async function POST(req) {
                 },
               ];
 
-              console.log(
-                "Manual search results:",
-                JSON.stringify(functionResponseParts, null, 2)
-              );
+              // console.log(
+              //   "Manual search results:",
+              //   JSON.stringify(functionResponseParts, null, 2)
+              // );
 
               const followUpResult = await chat.sendMessageStream(
                 functionResponseParts
