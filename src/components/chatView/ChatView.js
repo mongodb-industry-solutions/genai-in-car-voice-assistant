@@ -6,13 +6,20 @@ import { v4 as uuidv4 } from "uuid";
 import useChatSimulate from "@/hooks/useChatSimulate";
 import useChat from "@/hooks/useChat";
 import { DEFAULT_GREETINGS } from "@/lib/const";
+import Button from "@leafygreen-ui/button";
 
-const ChatView = ({ setIsRecalculating, setCurrentView, simulationMode }) => {
+const ChatView = ({
+  setIsRecalculating,
+  setCurrentView,
+  simulationMode,
+  selectedDevice,
+}) => {
   const chatEndRef = useRef(null);
   const [messagesToShow, setMessagesToShow] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(true);
   const [suggestedAnswer, setSuggestedAnswer] = useState(null);
-  const [userInput, setUserInput] = useState("");
+  //const [userInput, setUserInput] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
   const sessionId = useRef(uuidv4());
 
   const {
@@ -27,10 +34,12 @@ const ChatView = ({ setIsRecalculating, setCurrentView, simulationMode }) => {
     setSuggestedAnswer,
   });
 
-  const { handleLLMResponse } = useChat({
+  const { handleLLMResponse, startRecording, stopRecording } = useChat({
     setMessagesToShow,
     setIsTyping,
+    setIsRecording,
     sessionId,
+    selectedDevice,
   });
 
   useEffect(() => {
@@ -47,13 +56,29 @@ const ChatView = ({ setIsRecalculating, setCurrentView, simulationMode }) => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messagesToShow, suggestedAnswer]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!userInput.trim()) return; // Prevent empty messages
-    setMessagesToShow((prev) => [...prev, { sender: "user", text: userInput }]);
-    handleLLMResponse(userInput);
-    setUserInput(""); // Clear input field
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (!userInput.trim()) return; // Prevent empty messages
+  //   setMessagesToShow((prev) => [...prev, { sender: "user", text: userInput }]);
+  //   handleLLMResponse(userInput);
+  //   setUserInput(""); // Clear input field
+  // };
+
+  // const handleToggleRecording = () => {
+  //   if (isRecording) {
+  //     stopRecording();
+  //   } else {
+  //     startRecording();
+  //   }
+  //   setIsRecording((prev) => !prev); // Toggle recording state
+  // };
+
+  // Stop recording automatically after the LLM response is sent
+  useEffect(() => {
+    if (!simulationMode && !isTyping && !isRecording) {
+      startRecording();
+    }
+  }, [isTyping, simulationMode]);
 
   return (
     <div className={styles.chatViewContainer}>
@@ -65,7 +90,7 @@ const ChatView = ({ setIsRecalculating, setCurrentView, simulationMode }) => {
         <div ref={chatEndRef} />
       </div>
 
-      <form className={styles.inputContainer} onSubmit={handleSubmit}>
+      {/* <form className={styles.inputContainer} onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Type your message..."
@@ -76,7 +101,17 @@ const ChatView = ({ setIsRecalculating, setCurrentView, simulationMode }) => {
         <button type="submit" disabled={isTyping || !userInput.trim()}>
           Send
         </button>
-      </form>
+      </form> */}
+
+      {/* <Button
+        className={`${styles.recordButton} ${
+          isRecording ? styles.recording : ""
+        }`}
+        //disabled={isTyping}
+        onClick={handleToggleRecording}
+      >
+        {isRecording ? "Stop Recording" : "Start Recording"}
+      </Button> */}
 
       <SuggestedAnswer
         suggestedAnswer={suggestedAnswer}

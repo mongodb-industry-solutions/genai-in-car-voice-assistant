@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { startChatSession } from "@/lib/gcp";
+import { startChatSession } from "@/lib/vertexai";
 
 export async function POST(req) {
   try {
@@ -13,8 +13,8 @@ export async function POST(req) {
           const result = await chat.sendMessageStream(message);
 
           for await (const item of result.stream) {
-            const token = item.candidates[0].content.parts[0].text;
-            controller.enqueue(token); // Send token to client
+            const token = item.candidates[0].content.parts?.[0]?.text;
+            controller.enqueue(token || ""); // Send token to client
           }
 
           controller.close(); // Close stream when done
