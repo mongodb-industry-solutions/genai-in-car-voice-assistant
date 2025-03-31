@@ -9,6 +9,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center; /* Centers content vertically */
+  overflow: hidden;
 }
 
 .modalContent {
@@ -19,6 +20,8 @@
   max-height: 90vh;
   height: 600px; /* Set a fixed height */
   min-height: 500px; /* Prevent shrinking */
+  scrollbar-width: thin;
+  scrollbar-color: #3D4F58 #112733;
 }
 
 .modalH3 {
