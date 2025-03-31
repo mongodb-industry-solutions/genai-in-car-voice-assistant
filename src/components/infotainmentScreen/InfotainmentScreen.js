@@ -53,6 +53,7 @@ const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
             <ChatView
               setIsRecalculating={setIsRecalculating}
               setCurrentView={setCurrentView}
+              simulationMode={simulationMode}
             />{" "}
             <NavigationView
               isFullScreen={false}
