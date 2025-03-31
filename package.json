@@ -10,6 +10,7 @@
     "prepare": "next-ws patch"
   },
   "dependencies": {
+    "@google-cloud/aiplatform": "^4.1.0",
     "@google-cloud/speech": "^7.0.1",
     "@google-cloud/vertexai": "^1.9.3",
     "@leafygreen-ui/button": "^23.1.2",
@@ -19,6 +20,7 @@
     "@leafygreen-ui/modal": "^17.1.1",
     "@leafygreen-ui/select": "^14.1.1",
     "@leafygreen-ui/typography": "^20.1.4",
+    "mongodb": "^6.15.0",
     "next": "15.2.3",
     "next-ws": "^2.0.5",
     "react": "^19.0.0",

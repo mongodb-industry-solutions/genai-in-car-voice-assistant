@@ -44,7 +44,7 @@ const useChatSimulate = ({
             setIsTyping(false);
             resolve();
           }
-        }, 300);
+        }, 250);
       });
     },
     [playAudioSimulate]

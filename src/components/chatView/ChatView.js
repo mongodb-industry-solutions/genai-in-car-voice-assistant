@@ -35,6 +35,8 @@ const ChatView = ({
   });
 
   const { handleLLMResponse, startRecording, stopRecording } = useChat({
+    setIsRecalculating,
+    setCurrentView,
     setMessagesToShow,
     setIsTyping,
     setIsRecording,
