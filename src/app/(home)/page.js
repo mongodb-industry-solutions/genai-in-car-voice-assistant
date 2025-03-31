@@ -12,6 +12,7 @@ import { TALK_TRACK } from "@/lib/const";
 
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [simulationMode, setSimulationMode] = useState(true);
   const [openHelpModal, setOpenHelpModal] = useState(false);
 
   return (
@@ -28,8 +29,13 @@ export default function Home() {
         sections={TALK_TRACK}
       />
       <VehicleDashboard isPlaying={isPlaying} />
-      <InfotainmentScreen isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
-      <LogConsole />
+      <InfotainmentScreen
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        simulationMode={simulationMode}
+        setSimulationMode={setSimulationMode}
+      />
+      <LogConsole simulationMode={simulationMode} />
     </div>
   );
 }

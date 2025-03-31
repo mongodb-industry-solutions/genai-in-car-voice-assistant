@@ -8,7 +8,7 @@ import Badge from "@leafygreen-ui/badge";
 import Code from "@leafygreen-ui/code";
 import { Body } from "@leafygreen-ui/typography";
 
-const LogConsole = () => {
+const LogConsole = ({ simulationMode }) => {
   const [logs, setLogs] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -17,7 +17,7 @@ const LogConsole = () => {
   const sessionId = useChatSession();
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!sessionId || simulationMode) return;
 
     const fetchLogs = async () => {
       const response = await fetch("/api/action/findOne", {
@@ -37,7 +37,7 @@ const LogConsole = () => {
     fetchLogs();
     const interval = setInterval(fetchLogs, 3000);
     return () => clearInterval(interval);
-  }, [sessionId]);
+  }, [sessionId, simulationMode]);
 
   useEffect(() => {
     if (logContainerRef.current) {
