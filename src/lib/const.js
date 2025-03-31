@@ -126,3 +126,114 @@ export const dtcCodesDictionary = [
     description: "System Voltage High",
   },
 ];
+
+export const TALK_TRACK = [
+  {
+    heading: "Solution Overview",
+    content: [
+      {
+        heading: "Automotive innovation is accelerating",
+        body: [
+          "The industry is undergoing rapid transformation with electric vehicles, autonomous driving, and advanced safety features.",
+          "These advancements have created a demand for more sophisticated and intelligent in-car systems.",
+        ],
+      },
+      {
+        heading: "Current voice assistants are underutilized",
+        body: [
+          "Most vehicles come equipped with voice assistants, and drivers use them regularly.",
+          "However, today’s assistants are limited to basic task like navigation, in-vehicle controls, and calls.",
+        ],
+      },
+      {
+        heading: "GenAI: The future of in-car assistants",
+        body: [
+          "Generative AI is shifting voice assistants from basic command-response to dynamic, interactive experiences.",
+          "These assistants will understand driver needs, provide more relevant insights, and enhance overall user experience.",
+        ],
+      },
+      {
+        image: {
+          src: "/stats.svg",
+          alt: "Solution Overview",
+        },
+      },
+    ],
+  },
+  {
+    heading: "How to Demo",
+    content: [
+      {
+        heading: " ",
+        body: "This demo showcases a GenAI-powered in-car assistant that helps diagnose issues and provide navigation support. It can run in two modes: Simulation Mode (default), which follows a pre-set scenario without using resources or credits, and Execution Mode, where you can freely interact with the assistant using actual system resources. To switch modes, click the Options button (bottom-left icon) and select the desired mode. If switching to Execution Mode, you will be prompted to select a microphone. Since this is a voice assistant demo, ensure your sound is on to hear responses. If sound is unavailable, you can still read them in the chat.",
+      },
+      {
+        image: {
+          src: "/menu-guide.png",
+          alt: "Menu Guide",
+        },
+      },
+      {
+        heading: "Simulation Mode",
+        body: [
+          "Press 'Start Navigation' to begin; the car will enter navigation mode.",
+          "After a few seconds, the 'Low Engine Oil Pressure' warning light will turn on.",
+          "Open the assistant by pressing the mic icon; the leafy assistant will greet you.",
+          "Click suggested replies or press Enter to continue the conversation.",
+          "The assistant will analyze the warning light, diagnose the issue, and inform you.",
+          "If you confirm you want guidance, the assistant will check the manual and provide instructions.",
+          "If a service station visit is required and confirmed, the assistant will recalculate your route.",
+          "Once resolved, the assistant will ask if you need further help; confirming you're done will close the chat and return to navigation.",
+        ],
+      },
+      {
+        heading: "Execution Mode",
+        body: [
+          "Press 'Start Navigation' to begin; the car will enter navigation mode.",
+          "The 'Low Engine Oil Pressure' warning light will turn on automatically.",
+          "Optionally, you can manually toggle other warning lights by clicking on them.",
+          "Open the assistant by pressing the mic icon; the leafy assistant will greet you.",
+          "Speak directly to the assistant, which will recognize your voice and respond.",
+          "The assistant can fetch diagnostic codes, check the manual, recalculate routes, and close the chat as needed.",
+          "Ask about active warning lights or any car-related issue, and the assistant will provide information and suggest next steps.",
+        ],
+      },
+    ],
+  },
+  {
+    heading: "Behind the Scenes",
+    content: [
+      {
+        image: {
+          src: "high-level-architecture.png",
+          alt: "High Level Architecture",
+        },
+      },
+      {
+        heading: " ",
+        body: "This solution combines Google Cloud with MongoDB Atlas to power an in-car voice assistant. GCP Speech-to-Text transcribes user input, and MongoDB Atlas Vector Search retrieves relevant sections of the car manual. The retrieved data is then fed into an LLM through Vertex AI, enabling the assistant to generate accurate, context-aware responses. The assistant perception is enhanced by providing access to the vehicle signal data, which is kept in sync with the MongoDB Atlas via PowerSync's native connector.",
+      },
+    ],
+  },
+  {
+    heading: "Why MongoDB?",
+    content: [
+      {
+        heading: "Leaders in the NoSQL Data Space",
+        body: "MongoDB document model is intuitive, flexible and can handle the most complex requirements in a cost-effective way.",
+      },
+      {
+        heading: "Vector Store at Scale",
+        body: "MongoDB excels at storing operational, metadata, and vector data together at scale.",
+      },
+      {
+        heading: "Automotive Industry Presence",
+        body: "Trusted by top auto manufacturers, MongoDB is well-positioned to help automakers scale and optimize data solutions.",
+      },
+      {
+        heading: "Accelerated Development",
+        body: "The fully managed developer data platform, MongoDB Atlas, streamlines development, and reduces operational complexity.",
+      },
+    ],
+  },
+];
