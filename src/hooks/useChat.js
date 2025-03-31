@@ -10,6 +10,7 @@ const useChat = ({
   setIsRecording,
   sessionId,
   selectedDevice,
+  isSpeakerMuted,
 }) => {
   const socketRef = useRef(null);
   const processorRef = useRef(null);
@@ -59,7 +60,8 @@ const useChat = ({
       const { value, done } = await reader.read();
       if (done && !isFunctionCallActive) {
         setIsTyping(false);
-        if (partialMessage) await handleTextToSpeech(partialMessage);
+        if (partialMessage && !isSpeakerMuted)
+          await handleTextToSpeech(partialMessage);
         return;
       }
 
@@ -161,7 +163,8 @@ const useChat = ({
     const processStream = async () => {
       const { value, done } = await reader.read();
       if (done) {
-        if (partialMessage) await handleTextToSpeech(partialMessage);
+        if (partialMessage && !isSpeakerMuted)
+          await handleTextToSpeech(partialMessage);
         return;
       }
 
@@ -183,7 +186,15 @@ const useChat = ({
 
   const startRecording = async () => {
     setIsRecording(true);
-    setMessagesToShow((prev) => [...prev, { sender: "user", text: "" }]);
+
+    setMessagesToShow((prev) => {
+      // Check if the last message is from the user and is empty
+      const lastMessage = prev[prev.length - 1];
+      if (lastMessage?.sender === "user" && lastMessage?.text?.trim() === "") {
+        return prev; // Do nothing if the last message is empty
+      }
+      return [...prev, { sender: "user", text: "" }];
+    });
 
     // Initialize WebSocket connection to the server
     socketRef.current = new WebSocket(
