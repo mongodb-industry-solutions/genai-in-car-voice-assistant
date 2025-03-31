@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useChatSession } from "@/context/ChatSessionContext";
 import { useVehicle } from "@/context/VehicleContext";
 import { dtcCodesDictionary } from "@/lib/const";
 
@@ -8,7 +9,6 @@ const useChat = ({
   setMessagesToShow,
   setIsTyping,
   setIsRecording,
-  sessionId,
   selectedDevice,
   isSpeakerMuted,
 }) => {
@@ -17,6 +17,8 @@ const useChat = ({
   const audioContextRef = useRef(null);
   const audioInputRef = useRef(null);
   const vehicleRef = useRef(null);
+
+  const sessionId = useChatSession();
 
   // Web Socket Config
   const protocol = process.env.NEXT_PUBLIC_ENV === "local" ? "ws" : "wss";
@@ -41,7 +43,7 @@ const useChat = ({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sessionId: sessionId.current,
+        sessionId: sessionId,
         message: userMessage,
       }),
     });
@@ -92,6 +94,32 @@ const useChat = ({
     processStream();
   };
 
+  const addLog = async (sessionId, toolName, type, details) => {
+    try {
+      await fetch("/api/action/updateOne", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          collection: "logs",
+          filter: { sessionId },
+          update: {
+            $push: {
+              logs: {
+                timestamp: new Date().toISOString(),
+                toolName,
+                type,
+                details,
+              },
+            },
+          },
+          upsert: true,
+        }),
+      });
+    } catch (error) {
+      console.error("Error saving log:", error);
+    }
+  };
+
   const handleFunctionCall = async (functionCall) => {
     return new Promise((resolve) => {
       switch (functionCall.name) {
@@ -99,15 +127,26 @@ const useChat = ({
           setIsRecalculating(true);
           setTimeout(() => {
             setIsRecalculating(false);
-            replyToFunctionCall(functionCall.name, {});
+
+            let response = { success: true };
+            replyToFunctionCall(functionCall.name, response);
+
+            addLog(sessionId, functionCall.name, "response", response);
+
             resolve();
           }, 2000);
+
           break;
 
         case "closeChat":
           setTimeout(() => {
             setCurrentView("navigation");
-            replyToFunctionCall(functionCall.name, {});
+
+            let response = { success: true };
+            replyToFunctionCall(functionCall.name, response);
+
+            addLog(sessionId, functionCall.name, "response", response);
+
             resolve();
           }, 500);
           break;
@@ -128,6 +167,9 @@ const useChat = ({
 
           const dtcResponse = { dtcCount, dtcList: enrichedDtcList };
           replyToFunctionCall(functionCall.name, dtcResponse);
+
+          addLog(sessionId, functionCall.name, "response", dtcResponse);
+
           resolve();
           break;
         default:
@@ -146,7 +188,7 @@ const useChat = ({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sessionId: sessionId.current,
+        sessionId: sessionId,
         message: functionResponseParts,
       }),
     });

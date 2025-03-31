@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Message from "./message/Message";
 import SuggestedAnswer from "./suggestedAnswer/SuggestedAnswer";
 import styles from "./chatView.module.css";
-import { v4 as uuidv4 } from "uuid";
 import useChatSimulate from "@/hooks/useChatSimulate";
 import useChat from "@/hooks/useChat";
 import { DEFAULT_GREETINGS } from "@/lib/const";
@@ -21,7 +20,6 @@ const ChatView = ({
   const [isRecording, setIsRecording] = useState(false);
   const [writerMode, setWriterMode] = useState(false);
   const [isSpeakerMuted, setIsSpeakerMuted] = useState(false);
-  const sessionId = useRef(uuidv4());
 
   const {
     handleNextMessageSimulate,
@@ -41,7 +39,6 @@ const ChatView = ({
     setMessagesToShow,
     setIsTyping,
     setIsRecording,
-    sessionId,
     selectedDevice,
     isSpeakerMuted,
   });

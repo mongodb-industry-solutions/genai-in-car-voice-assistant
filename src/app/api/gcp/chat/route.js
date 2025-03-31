@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { startChatSession, createEmbedding } from "@/lib/vertexai";
-import { vectorSearch } from "@/lib/mongodb";
+import { vectorSearch, clientPromise } from "@/lib/mongodb";
 
 export async function POST(req) {
   try {
@@ -20,6 +20,7 @@ export async function POST(req) {
 
             if (candidate.content?.parts?.[0]?.functionCall) {
               functionCall = candidate.content.parts[0].functionCall;
+              addLog(sessionId, functionCall.name, "call", functionCall);
             } else {
               const token = candidate.content.parts?.[0]?.text || "";
               controller.enqueue(token);
@@ -32,18 +33,8 @@ export async function POST(req) {
             const { name, args } = functionCall;
 
             if (name === "consultManual") {
-              // Execute consultManual in the backend
-              // console.log(
-              //   "Function call:",
-              //   JSON.stringify(functionCall, null, 2)
-              // );
-
               const queryEmbedding = await createEmbedding(args.query);
               const relevantChunks = await vectorSearch(queryEmbedding);
-
-              const formattedChunks = relevantChunks
-                .map((chunk) => chunk.text)
-                .join("\n\n");
 
               const functionResponseParts = [
                 {
@@ -59,10 +50,7 @@ export async function POST(req) {
                 },
               ];
 
-              // console.log(
-              //   "Manual search results:",
-              //   JSON.stringify(functionResponseParts, null, 2)
-              // );
+              addLog(sessionId, name, "response", functionResponseParts);
 
               const followUpResult = await chat.sendMessageStream(
                 functionResponseParts
@@ -100,5 +88,30 @@ export async function POST(req) {
       { error: "Internal Server Error" },
       { status: 500 }
     );
+  }
+}
+
+async function addLog(sessionId, toolName, type, details) {
+  try {
+    const client = await clientPromise;
+    const db = client.db(process.env.DATABASE_NAME);
+    const logsCollection = db.collection("logs");
+
+    await logsCollection.updateOne(
+      { sessionId },
+      {
+        $push: {
+          logs: {
+            timestamp: new Date().toISOString(),
+            toolName,
+            type,
+            details,
+          },
+        },
+      },
+      { upsert: true }
+    );
+  } catch (error) {
+    console.error("Error logging tool call:", error);
   }
 }

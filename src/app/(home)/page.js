@@ -7,6 +7,7 @@ import { H1 } from "@leafygreen-ui/typography";
 import InfotainmentScreen from "@/components/infotainmentScreen/InfotainmentScreen";
 import VehicleDashboard from "@/components/vehicleDashboard/VehicleDashboard";
 import InfoWizard from "@/components/infoWizard/InfoWizard";
+import LogConsole from "@/components/logConsole/LogConsole";
 import { TALK_TRACK } from "@/lib/const";
 
 export default function Home() {
@@ -28,6 +29,7 @@ export default function Home() {
       />
       <VehicleDashboard isPlaying={isPlaying} />
       <InfotainmentScreen isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
+      <LogConsole />
     </div>
   );
 }
