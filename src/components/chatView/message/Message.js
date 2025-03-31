@@ -2,7 +2,7 @@ import React from "react";
 import { Body, Label } from "@leafygreen-ui/typography";
 import styles from "./message.module.css";
 
-const Message = ({ message }) => {
+const Message = ({ message, isRecording, isLastMessage }) => {
   const isUser = message.sender === "user";
   return (
     <div
@@ -10,9 +10,18 @@ const Message = ({ message }) => {
         isUser ? styles.user : styles.assistant
       }`}
     >
-      <Label className={styles.senderName} baseFontSize={13}>
-        {message.sender === "user" ? "Eddy" : "Leafy Assistant"}
-      </Label>
+      <div className={styles.messageHeader}>
+        {isUser && isLastMessage && (
+          <span
+            className={`${styles.recordingIndicator} ${
+              isRecording ? styles.pulsing : ""
+            }`}
+          />
+        )}
+        <Label className={styles.senderName} baseFontSize={13}>
+          {message.sender === "user" ? "Eddy" : "Leafy Assistant"}
+        </Label>
+      </div>
       <Body
         className={styles.messageBubble}
         baseFontSize={16}
