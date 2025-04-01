@@ -6,10 +6,14 @@ import NavigationView from "@/components/navigationView/NavigationView";
 import OptionsView from "@/components/optionsView/OptionsView";
 import styles from "./infotainmentScreen.module.css";
 
-const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
+const InfotainmentScreen = ({
+  isPlaying,
+  setIsPlaying,
+  simulationMode,
+  setSimulationMode,
+}) => {
   const [time, setTime] = useState("--:--");
   const [currentView, setCurrentView] = useState("navigation");
-  const [simulationMode, setSimulationMode] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [isRecalculating, setIsRecalculating] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);

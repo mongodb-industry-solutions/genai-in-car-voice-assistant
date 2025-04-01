@@ -6,6 +6,8 @@ export default function ThemeProvider({ children }) {
   const darkMode = true;
 
   return (
-    <LeafyGreenProvider darkMode={darkMode}>{children}</LeafyGreenProvider>
+    <LeafyGreenProvider darkMode={darkMode} baseFontSize={16}>
+      {children}
+    </LeafyGreenProvider>
   );
 }

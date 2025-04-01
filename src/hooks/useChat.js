@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useChatSession } from "@/context/ChatSessionContext";
 import { useVehicle } from "@/context/VehicleContext";
 import { dtcCodesDictionary } from "@/lib/const";
 
@@ -8,14 +9,16 @@ const useChat = ({
   setMessagesToShow,
   setIsTyping,
   setIsRecording,
-  sessionId,
   selectedDevice,
+  isSpeakerMuted,
 }) => {
   const socketRef = useRef(null);
   const processorRef = useRef(null);
   const audioContextRef = useRef(null);
   const audioInputRef = useRef(null);
   const vehicleRef = useRef(null);
+
+  const sessionId = useChatSession();
 
   // Web Socket Config
   const protocol = process.env.NEXT_PUBLIC_ENV === "local" ? "ws" : "wss";
@@ -40,7 +43,7 @@ const useChat = ({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sessionId: sessionId.current,
+        sessionId: sessionId,
         message: userMessage,
       }),
     });
@@ -59,7 +62,8 @@ const useChat = ({
       const { value, done } = await reader.read();
       if (done && !isFunctionCallActive) {
         setIsTyping(false);
-        if (partialMessage) await handleTextToSpeech(partialMessage);
+        if (partialMessage && !isSpeakerMuted)
+          await handleTextToSpeech(partialMessage);
         return;
       }
 
@@ -90,6 +94,32 @@ const useChat = ({
     processStream();
   };
 
+  const addLog = async (sessionId, toolName, type, details) => {
+    try {
+      await fetch("/api/action/updateOne", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          collection: "logs",
+          filter: { sessionId },
+          update: {
+            $push: {
+              logs: {
+                timestamp: new Date().toISOString(),
+                toolName,
+                type,
+                details,
+              },
+            },
+          },
+          upsert: true,
+        }),
+      });
+    } catch (error) {
+      console.error("Error saving log:", error);
+    }
+  };
+
   const handleFunctionCall = async (functionCall) => {
     return new Promise((resolve) => {
       switch (functionCall.name) {
@@ -97,15 +127,26 @@ const useChat = ({
           setIsRecalculating(true);
           setTimeout(() => {
             setIsRecalculating(false);
-            replyToFunctionCall(functionCall.name, {});
+
+            let response = { success: true };
+            replyToFunctionCall(functionCall.name, response);
+
+            addLog(sessionId, functionCall.name, "response", response);
+
             resolve();
           }, 2000);
+
           break;
 
         case "closeChat":
           setTimeout(() => {
             setCurrentView("navigation");
-            replyToFunctionCall(functionCall.name, {});
+
+            let response = { success: true };
+            replyToFunctionCall(functionCall.name, response);
+
+            addLog(sessionId, functionCall.name, "response", response);
+
             resolve();
           }, 500);
           break;
@@ -126,6 +167,9 @@ const useChat = ({
 
           const dtcResponse = { dtcCount, dtcList: enrichedDtcList };
           replyToFunctionCall(functionCall.name, dtcResponse);
+
+          addLog(sessionId, functionCall.name, "response", dtcResponse);
+
           resolve();
           break;
         default:
@@ -144,7 +188,7 @@ const useChat = ({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sessionId: sessionId.current,
+        sessionId: sessionId,
         message: functionResponseParts,
       }),
     });
@@ -161,7 +205,8 @@ const useChat = ({
     const processStream = async () => {
       const { value, done } = await reader.read();
       if (done) {
-        if (partialMessage) await handleTextToSpeech(partialMessage);
+        if (partialMessage && !isSpeakerMuted)
+          await handleTextToSpeech(partialMessage);
         return;
       }
 
@@ -183,7 +228,15 @@ const useChat = ({
 
   const startRecording = async () => {
     setIsRecording(true);
-    setMessagesToShow((prev) => [...prev, { sender: "user", text: "" }]);
+
+    setMessagesToShow((prev) => {
+      // Check if the last message is from the user and is empty
+      const lastMessage = prev[prev.length - 1];
+      if (lastMessage?.sender === "user" && lastMessage?.text?.trim() === "") {
+        return prev; // Do nothing if the last message is empty
+      }
+      return [...prev, { sender: "user", text: "" }];
+    });
 
     // Initialize WebSocket connection to the server
     socketRef.current = new WebSocket(

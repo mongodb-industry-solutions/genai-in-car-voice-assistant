@@ -2,11 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import Message from "./message/Message";
 import SuggestedAnswer from "./suggestedAnswer/SuggestedAnswer";
 import styles from "./chatView.module.css";
-import { v4 as uuidv4 } from "uuid";
 import useChatSimulate from "@/hooks/useChatSimulate";
 import useChat from "@/hooks/useChat";
 import { DEFAULT_GREETINGS } from "@/lib/const";
-import Button from "@leafygreen-ui/button";
+import ChatOptions from "./chatOptions/ChatOptions";
 
 const ChatView = ({
   setIsRecalculating,
@@ -18,9 +17,9 @@ const ChatView = ({
   const [messagesToShow, setMessagesToShow] = useState([]);
   const [isTyping, setIsTyping] = useState(true);
   const [suggestedAnswer, setSuggestedAnswer] = useState(null);
-  //const [userInput, setUserInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
-  const sessionId = useRef(uuidv4());
+  const [writerMode, setWriterMode] = useState(false);
+  const [isSpeakerMuted, setIsSpeakerMuted] = useState(false);
 
   const {
     handleNextMessageSimulate,
@@ -40,8 +39,8 @@ const ChatView = ({
     setMessagesToShow,
     setIsTyping,
     setIsRecording,
-    sessionId,
     selectedDevice,
+    isSpeakerMuted,
   });
 
   useEffect(() => {
@@ -58,26 +57,25 @@ const ChatView = ({
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messagesToShow, suggestedAnswer]);
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!userInput.trim()) return; // Prevent empty messages
-  //   setMessagesToShow((prev) => [...prev, { sender: "user", text: userInput }]);
-  //   handleLLMResponse(userInput);
-  //   setUserInput(""); // Clear input field
-  // };
+  const submitMessage = (text) => {
+    setMessagesToShow((prev) => {
+      const lastMessage = prev[prev.length - 1];
 
-  // const handleToggleRecording = () => {
-  //   if (isRecording) {
-  //     stopRecording();
-  //   } else {
-  //     startRecording();
-  //   }
-  //   setIsRecording((prev) => !prev); // Toggle recording state
-  // };
+      // If the last message is from the user and is empty, overwrite it
+      if (lastMessage?.sender === "user" && lastMessage?.text.trim() === "") {
+        return [...prev.slice(0, -1), { sender: "user", text }];
+      }
+
+      // Otherwise, add a new message
+      return [...prev, { sender: "user", text }];
+    });
+
+    handleLLMResponse(text);
+  };
 
   // Stop recording automatically after the LLM response is sent
   useEffect(() => {
-    if (!simulationMode && !isTyping && !isRecording) {
+    if (!simulationMode && !isTyping && !isRecording && !writerMode) {
       startRecording();
     }
   }, [isTyping, simulationMode]);
@@ -87,42 +85,38 @@ const ChatView = ({
       {/* Scrollable chat messages */}
       <div className={styles.conversationContainer}>
         {messagesToShow.map((msg, index) => (
-          <Message key={index} message={msg} />
+          <Message
+            key={index}
+            message={msg}
+            isRecording={isRecording}
+            isLastMessage={index === messagesToShow.length - 1}
+          />
         ))}
         <div ref={chatEndRef} />
       </div>
 
-      {/* <form className={styles.inputContainer} onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          disabled={isTyping}
+      {!simulationMode ? (
+        <ChatOptions
+          isSpeakerMuted={isSpeakerMuted}
+          setIsSpeakerMuted={setIsSpeakerMuted}
+          writerMode={writerMode}
+          setWriterMode={setWriterMode}
+          isRecording={isRecording}
+          startRecording={startRecording}
+          stopRecording={stopRecording}
+          isTyping={isTyping}
+          submitMessage={submitMessage}
         />
-        <button type="submit" disabled={isTyping || !userInput.trim()}>
-          Send
-        </button>
-      </form> */}
-
-      {/* <Button
-        className={`${styles.recordButton} ${
-          isRecording ? styles.recording : ""
-        }`}
-        //disabled={isTyping}
-        onClick={handleToggleRecording}
-      >
-        {isRecording ? "Stop Recording" : "Start Recording"}
-      </Button> */}
-
-      <SuggestedAnswer
-        suggestedAnswer={suggestedAnswer}
-        isTyping={isTyping}
-        onSuggestionClick={() => {
-          setSuggestedAnswer(null);
-          handleNextMessageSimulate();
-        }}
-      />
+      ) : (
+        <SuggestedAnswer
+          suggestedAnswer={suggestedAnswer}
+          isTyping={isTyping}
+          onSuggestionClick={() => {
+            setSuggestedAnswer(null);
+            handleNextMessageSimulate();
+          }}
+        />
+      )}
     </div>
   );
 };
