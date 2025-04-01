@@ -1,5 +1,5 @@
 "use client";
-
+import { usePowerSync } from '@powersync/react';
 import { createContext, useContext, useState, useEffect } from "react";
 
 const VehicleContext = createContext();
@@ -8,7 +8,11 @@ export const useVehicle = () => {
   return useContext(VehicleContext);
 };
 
+// Hardcoded ID used for testing.
+const vehicleId = "67e58d5f672b23090e57d478";
+
 export const VehicleProvider = ({ children }) => {
+  const powersync = usePowerSync();
   const [vehicle, setVehicle] = useState({
     VehicleIdentification: {
       VIN: "1HGCM82633A004352",
@@ -52,9 +56,34 @@ export const VehicleProvider = ({ children }) => {
     });
   };
 
-  //   useEffect(() => {
-  //     console.log("Vehicle State Updated:", vehicle);
-  //   }, [vehicle]);
+    useEffect(() => {
+      console.log("Vehicle State Updated:", vehicle);
+
+      // Stringify the objects and write to the database.
+      // The backend API will write them as arrays/objects
+      // back to the source database.
+      const acceleration = JSON.stringify(vehicle.Acceleration);
+      const currentLocation = JSON.stringify(vehicle.CurrentLocation);
+      const diagnostics = JSON.stringify(vehicle.Diagnostics);
+
+      // Write changes to the database.
+      powersync.execute(`
+        UPDATE vehicleData 
+        SET Acceleration = ?, 
+            CurrentLocation = ?, 
+            Diagnostics = ?, 
+            Speed = ?, 
+            TraveledDistance = ?  
+        WHERE id = ?`,
+          [
+            acceleration,
+            currentLocation,
+            diagnostics,
+            vehicle.Speed,
+            vehicle.TraveledDistance,
+            vehicleId
+          ]);
+    }, [vehicle]);
 
   return (
     <VehicleContext.Provider value={{ vehicle, updateVehicle }}>

@@ -5,8 +5,8 @@ export class BackendClient {
         this.baseUrl = baseUrl;
     }
 
-    async getToken () {
-        const response = await fetch(`${this.baseUrl}/auth/token?userId=12345&powerSyncUrl=http://localhost:3000`, {
+    async getToken (powerSyncUrl) {
+        const response = await fetch(`${this.baseUrl}/auth/token?userId=12345&powerSyncUrl=${powerSyncUrl}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

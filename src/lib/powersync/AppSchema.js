@@ -1,11 +1,20 @@
 import { column, Schema, Table } from '@powersync/web';
 
-const lists = new Table({
-    created_at: column.text
-})
+const vehicleData = new Table(
+    {
+        // id column (text) is automatically included
+        Acceleration: column.text,
+        CurrentLocation: column.text,
+        Diagnostics: column.text,
+        Speed: column.integer,
+        TraveledDistance: column.integer,
+        VehicleIdentification: column.text
+    },
+    { indexes: {} }
+);
 
 const AppSchema = new Schema({
-    lists
+    vehicleData
 });
 
 export default AppSchema;
