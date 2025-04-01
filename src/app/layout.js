@@ -2,6 +2,7 @@ import "./globals.css";
 import ThemeProvider from "./ThemeProvider";
 import { VehicleProvider } from "@/context/VehicleContext";
 import { ChatSessionProvider } from "@/context/ChatSessionContext";
+import { VideoProvider } from "@/context/VideoProvider";
 
 export const metadata = {
   title: "GenAI-Powered In-Car Voice Assistant",
@@ -14,7 +15,9 @@ export default function RootLayout({ children }) {
       <body>
         <ThemeProvider>
           <VehicleProvider>
-            <ChatSessionProvider>{children}</ChatSessionProvider>
+            <VideoProvider>
+              <ChatSessionProvider>{children}</ChatSessionProvider>{" "}
+            </VideoProvider>
           </VehicleProvider>
         </ThemeProvider>
       </body>

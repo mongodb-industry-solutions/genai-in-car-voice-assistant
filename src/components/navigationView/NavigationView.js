@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import { useVideoContext } from "@/context/VideoProvider";
 import dynamic from "next/dynamic";
 import styles from "./navigationView.module.css";
 
@@ -19,6 +20,7 @@ const NavigationView = ({
   setCurrentTime,
   isRecalculating,
 }) => {
+  const { fullScreenVideo, sharedScreenVideo } = useVideoContext();
   const fullScreenVideoRef = useRef(null);
   const sharedScreenVideoRef = useRef(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -59,7 +61,7 @@ const NavigationView = ({
     <div className={styles.videoContainer}>
       <video
         ref={fullScreenVideoRef}
-        src="/videos/full-screen.mp4"
+        src={fullScreenVideo}
         className={`${styles.video} ${
           isFullScreen ? styles.active : styles.hidden
         }`}
@@ -76,7 +78,7 @@ const NavigationView = ({
 
       <video
         ref={sharedScreenVideoRef}
-        src="/videos/shared-screen.mp4"
+        src={sharedScreenVideo}
         className={`${styles.video} ${
           !isFullScreen ? styles.active : styles.hidden
         }`}

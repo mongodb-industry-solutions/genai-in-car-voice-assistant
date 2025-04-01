@@ -39,7 +39,7 @@ const InfoWizard = ({
                           {
                             section.body.map((item, idx) => (
                               typeof (item) == 'object'
-                                ? <li>
+                                ? <li key={idx}>
                                   {item.heading}
                                   <ul className={styles.list}>
                                     {
