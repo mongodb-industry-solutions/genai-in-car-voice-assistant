@@ -1,0 +1,75 @@
+.floatingButton {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .console {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background-color: #222;
+    color: white;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    transition: height 0.3s ease-in-out;
+    z-index: 10;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px 10px 20px;
+    background: #333;
+    font-weight: bold;
+  }
+  
+  .logsContainer {
+    overflow-y: auto;
+    max-height: 100%;
+    padding: 10px;
+  }
+  
+  .logEntry {
+    border-bottom: 1px solid #444;
+    padding: 5px;
+  }
+  
+  .logHeader {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .badge {
+    margin-right: 15px;
+  }
+  
+  .timestamp {
+    color: #aaa;
+    font-size: 0.85em;
+  }
+  
+  .toolName {
+    flex-grow: 1;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .call {
+    color: yellow;
+  }
+  
+  .response {
+    color: cyan;
+  }
+  
+  .logDetails {
+    margin: 10px;
+    width: 98%;
+  }
+  

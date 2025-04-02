@@ -6,12 +6,17 @@ import NavigationView from "@/components/navigationView/NavigationView";
 import OptionsView from "@/components/optionsView/OptionsView";
 import styles from "./infotainmentScreen.module.css";
 
-const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
+const InfotainmentScreen = ({
+  isPlaying,
+  setIsPlaying,
+  simulationMode,
+  setSimulationMode,
+}) => {
   const [time, setTime] = useState("--:--");
   const [currentView, setCurrentView] = useState("navigation");
-  const [simulationMode, setSimulationMode] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [isRecalculating, setIsRecalculating] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
     const updateClock = () => {
@@ -53,6 +58,8 @@ const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
             <ChatView
               setIsRecalculating={setIsRecalculating}
               setCurrentView={setCurrentView}
+              simulationMode={simulationMode}
+              selectedDevice={selectedDevice}
             />{" "}
             <NavigationView
               isFullScreen={false}
@@ -79,6 +86,7 @@ const InfotainmentScreen = ({ isPlaying, setIsPlaying }) => {
             simulationMode={simulationMode}
             setSimulationMode={setSimulationMode}
             setCurrentView={setCurrentView}
+            setSelectedDevice={setSelectedDevice}
           />
         )}
       </div>

@@ -1,4 +1,4 @@
-import WarningLight from "@/components/warningLight/WarningLight";
+import WarningLight from "@/components/vehicleDashboard/warningLight/WarningLight";
 import styles from "./vehicleDashboard.module.css";
 import { warningLights } from "@/lib/const";
 

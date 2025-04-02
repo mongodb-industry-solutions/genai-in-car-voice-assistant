@@ -1,0 +1,32 @@
+.chatOptionsContainer {
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+}
+
+.togglesContainer {
+  display: flex;
+  justify-content: space-evenly; /* Even spacing across the width */
+  align-items: center; /* Ensure vertical alignment */
+  width: 100%;
+  gap: 20px; /* Space between toggle-label pairs */
+}
+
+.toggleGroup {
+  display: flex;
+  align-items: center; /* Ensures label and toggle are aligned */
+  gap: 8px; /* Space between label and toggle */
+}
+
+.writerContainer {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.textArea {
+  flex: 1;
+}

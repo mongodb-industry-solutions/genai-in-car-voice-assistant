@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactStrictMode: false,
     webpack: (config, isServer) => {
         config.experiments = {
             ...config.experiments,

@@ -1,11 +1,30 @@
 "use client";
 
-import styles from "./optionsView.module.css";
+import { useState } from "react";
 import Button from "@leafygreen-ui/button";
+import AudioConfigMenu from "./audioConfigMenu/AudioConfigMenu";
+import styles from "./optionsView.module.css";
 
-const OptionsView = ({ simulationMode, setSimulationMode, setCurrentView }) => {
-  const handleModeChange = (mode) => {
-    setSimulationMode(mode);
+const OptionsView = ({
+  simulationMode,
+  setSimulationMode,
+  setCurrentView,
+  setSelectedDevice,
+}) => {
+  const [isAudioConfigOpen, setIsAudioConfigOpen] = useState(false);
+
+  const handleExecutionMode = () => {
+    setIsAudioConfigOpen(true);
+  };
+
+  const handleSimulationnMode = () => {
+    setSimulationMode(true);
+    setCurrentView("navigation");
+  };
+
+  const handleDeviceConfirm = (deviceId) => {
+    setSelectedDevice(deviceId);
+    setSimulationMode(false);
     setCurrentView("navigation");
   };
 
@@ -16,18 +35,24 @@ const OptionsView = ({ simulationMode, setSimulationMode, setCurrentView }) => {
         <Button
           className={styles.button}
           disabled={simulationMode}
-          onClick={() => handleModeChange(true)}
+          onClick={handleSimulationnMode}
         >
           Simulation Mode
         </Button>
         <Button
           className={styles.button}
           disabled={!simulationMode}
-          onClick={() => handleModeChange(false)}
+          onClick={handleExecutionMode}
         >
           Execution Mode
         </Button>
       </div>
+
+      <AudioConfigMenu
+        isOpen={isAudioConfigOpen}
+        onClose={() => setIsAudioConfigOpen(false)}
+        onConfirm={handleDeviceConfirm}
+      />
     </div>
   );
 };

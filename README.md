@@ -50,6 +50,21 @@ Before running the demo, ensure you have the following:
 - A **GCP account** with access to Vertex AI APIs
 - A **PowerSync account** for real-time data syncing
 
+## Environment Variables
+
+To configure the environment for this demo, you need to set up the following variables in a `.env.local` file. These variables ensure seamless integration with MongoDB Atlas, Google Cloud Platform, and other services used in the application. Below is an example configuration:
+
+```
+MONGODB_URI="<your-mongodb-connection-string>"
+DATABASE_NAME="car_assistant_demo"
+GCP_PROJECT_ID="<your-gcp-project-id>"
+GCP_LOCATION="us-central1"
+VERTEXAI_COMPLETIONS_MODEL="gemini-2.0-flash-001"
+VERTEXAI_EMBEDDINGS_MODEL="text-embedding-005"
+VERTEXAI_API_ENDPOINT="us-central1-aiplatform.googleapis.com"
+NEXT_PUBLIC_ENV="local"
+```
+
 ## Run it Locally
 
 1. Install dependencies:
