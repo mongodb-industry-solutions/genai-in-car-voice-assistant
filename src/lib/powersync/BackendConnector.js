@@ -11,7 +11,6 @@ export class BackendConnector {
         }
         try {
             const tokenData = await this.backendClient.getToken(this.powersyncUrl);
-            console.log("Got token", tokenData);
             return {
                 endpoint: this.powersyncUrl,
                 token: tokenData.token,
@@ -34,7 +33,6 @@ export class BackendConnector {
                 ops.push({id: crudEvent.id, table: crudEvent.table, data: record, op: crudEvent.op});
             }
             await this.backendClient.updateRow(ops);
-            console.log(ops);
             await transaction.complete();
         } catch (error) {
             console.error(`Data upload error - discarding`, error);

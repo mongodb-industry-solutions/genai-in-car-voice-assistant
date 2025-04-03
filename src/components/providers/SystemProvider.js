@@ -7,9 +7,11 @@ import { PowerSyncDatabase, WASQLiteOpenFactory } from '@powersync/web';
 import Logger from 'js-logger';
 import React, { Suspense } from 'react';
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-Logger.useDefaults();
-Logger.setLevel(Logger.DEBUG);
+if(process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    Logger.useDefaults();
+    Logger.setLevel(Logger.DEBUG);
+}
 
 export const db = new PowerSyncDatabase({
     schema: AppSchema,
@@ -17,7 +19,8 @@ export const db = new PowerSyncDatabase({
         dbFilename: 'powersync.db',
         flags: {
             enableMultiTabs: typeof SharedWorker !== 'undefined',
-            ssrMode: false
+            ssrMode: false,
+            disableSSRWarning: true
         }
     }),
     flags: {
@@ -25,14 +28,9 @@ export const db = new PowerSyncDatabase({
     }
 });
 
-const connector = new BackendConnector();
-
 export const SystemProvider = ({ children }) => {
-
-    db.connect(connector).then(() => {
-        console.log('PowerSync connected');
-        console.log(db.currentStatus);
-    });
+    const connector = new BackendConnector();
+    db.connect(connector)
 
     return (
         <Suspense>
