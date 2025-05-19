@@ -30,19 +30,17 @@
 }
 
 .imageWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 400px; /* Set a fixed height or make it dynamic based on your needs */
   flex-grow: 1;
+  margin: 20px 0;
 }
 
 .modalImage {
-  width: 90%;
-  height: auto;
-  margin: 0 auto;
   border-radius: 8px;
-  margin: 20px;
-  align-self: center;
+  object-fit: contain;
+  padding: 0;
 }
 
 @media (max-width: 768px) {
@@ -64,8 +62,11 @@
     font-size: 1.2rem; /* Smaller heading for mobile */
   }
 
+  .imageWrapper {
+    height: 250px; /* Smaller height for mobile */
+  }
+  
   .modalImage {
-    width: 100%;
-    max-width: 100%; /* Ensure images are responsive */
+    border-radius: 4px;
   }
 }

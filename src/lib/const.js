@@ -205,7 +205,7 @@ export const TALK_TRACK = [
     content: [
       {
         image: {
-          src: "high-level-architecture.png",
+          src: "/high-level-architecture.png",
           alt: "High Level Architecture",
         },
       },
