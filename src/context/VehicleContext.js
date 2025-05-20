@@ -32,11 +32,11 @@ const isPowerSyncEnabled = () => {
 };
 
 export const VehicleProvider = ({ children }) => {
-  // Check if PowerSync is enabled before using the hook
-  const powerSyncEnabled = isPowerSyncEnabled();
+  // Always call the hook to follow React rules of hooks
+  const powersync = usePowerSync();
 
-  // Only use the PowerSync hook if it's enabled
-  const powersync = powerSyncEnabled ? usePowerSync() : null;
+  // But only use it if PowerSync is enabled
+  const powerSyncEnabled = isPowerSyncEnabled();
   const [vehicle, setVehicle] = useState({
     VehicleIdentification: {
       VIN: "1HGCM82633A004352",
