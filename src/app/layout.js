@@ -1,5 +1,6 @@
 import "./globals.css";
 import ThemeProvider from "./ThemeProvider";
+import { DynamicSystemProvider } from "@/components/providers/DynamicSystemProvider";
 import { VehicleProvider } from "@/context/VehicleContext";
 import { ChatSessionProvider } from "@/context/ChatSessionContext";
 import { VideoProvider } from "@/context/VideoProvider";
@@ -13,13 +14,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ThemeProvider>
-          <VehicleProvider>
-            <VideoProvider>
-              <ChatSessionProvider>{children}</ChatSessionProvider>{" "}
-            </VideoProvider>
-          </VehicleProvider>
-        </ThemeProvider>
+        <DynamicSystemProvider>
+          <ThemeProvider>
+            <VehicleProvider>
+              <VideoProvider>
+                <ChatSessionProvider>{children}</ChatSessionProvider>{" "}
+              </VideoProvider>
+            </VehicleProvider>
+          </ThemeProvider>
+        </DynamicSystemProvider>
       </body>
     </html>
   );

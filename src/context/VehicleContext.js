@@ -1,5 +1,5 @@
 "use client";
-
+import { usePowerSync } from "@powersync/react";
 import { createContext, useContext, useState, useEffect } from "react";
 
 const VehicleContext = createContext();
@@ -8,7 +8,35 @@ export const useVehicle = () => {
   return useContext(VehicleContext);
 };
 
+// Hardcoded ID used for testing.
+const vehicleId = "67e58d5f672b23090e57d478";
+
+// Check if PowerSync is configured
+const isPowerSyncEnabled = () => {
+  const powersyncUrl =
+    typeof process !== "undefined"
+      ? process.env.NEXT_PUBLIC_POWERSYNC_URL
+      : undefined;
+  const backendBaseUrl =
+    typeof process !== "undefined"
+      ? process.env.NEXT_PUBLIC_BACKEND_BASE_URL
+      : undefined;
+
+  if (!powersyncUrl || !backendBaseUrl) {
+    console.warn(
+      "PowerSync is disabled: Missing environment variables NEXT_PUBLIC_POWERSYNC_URL or NEXT_PUBLIC_BACKEND_BASE_URL"
+    );
+    return false;
+  }
+  return true;
+};
+
 export const VehicleProvider = ({ children }) => {
+  // Always call the hook to follow React rules of hooks
+  const powersync = usePowerSync();
+
+  // But only use it if PowerSync is enabled
+  const powerSyncEnabled = isPowerSyncEnabled();
   const [vehicle, setVehicle] = useState({
     VehicleIdentification: {
       VIN: "1HGCM82633A004352",
@@ -52,9 +80,46 @@ export const VehicleProvider = ({ children }) => {
     });
   };
 
-  //   useEffect(() => {
-  //     console.log("Vehicle State Updated:", vehicle);
-  //   }, [vehicle]);
+  useEffect(() => {
+    console.log("Vehicle State Updated:", vehicle);
+
+    // Only sync with PowerSync if it's enabled
+    if (powerSyncEnabled && powersync) {
+      // Stringify the objects and write to the database.
+      // The backend API will write them as arrays/objects
+      // back to the source database.
+      const acceleration = JSON.stringify(vehicle.Acceleration);
+      const currentLocation = JSON.stringify(vehicle.CurrentLocation);
+      const diagnostics = JSON.stringify(vehicle.Diagnostics);
+
+      try {
+        // Write changes to the database.
+        powersync.execute(
+          `
+            UPDATE vehicleData 
+            SET Acceleration = ?, 
+                CurrentLocation = ?, 
+                Diagnostics = ?, 
+                Speed = ?, 
+                TraveledDistance = ?  
+            WHERE id = ?`,
+          [
+            acceleration,
+            currentLocation,
+            diagnostics,
+            vehicle.Speed,
+            vehicle.TraveledDistance,
+            vehicleId,
+          ]
+        );
+      } catch (error) {
+        console.warn(
+          "Failed to sync vehicle data with PowerSync:",
+          error.message
+        );
+      }
+    }
+  }, [vehicle, powerSyncEnabled, powersync]);
 
   return (
     <VehicleContext.Provider value={{ vehicle, updateVehicle }}>

@@ -54,7 +54,7 @@ Before running the demo, ensure you have the following:
 
 To configure the environment for this demo, you need to set up the following variables in a `.env.local` file. These variables ensure seamless integration with MongoDB Atlas, Google Cloud Platform, and other services used in the application. Below is an example configuration:
 
-```
+```dotenv
 MONGODB_URI="<your-mongodb-connection-string>"
 DATABASE_NAME="car_assistant_demo"
 GCP_PROJECT_ID="<your-gcp-project-id>"
@@ -82,3 +82,20 @@ NEXT_PUBLIC_ENV="local"
 - Ensure you've created an `.env.local` file with valid API keys and environment variables.
 - Check that your MongoDB Atlas cluster is properly set up and accessible.
 - Verify that your Google Cloud Vertex AI and Speech-to-Text APIs are enabled.
+
+## PowerSync Integration
+
+The application has been integrated with PowerSync for local-first capabilities and uses the default IndexedDB VFS solution. The `./src/lib/powersync` directory contains all the files used for setup and talks to a separately hosted backend API for generating tokens, validating tokens and handling the upload to the source MongoDB database.
+
+There are also two `providers` in the `./src/components/providers` directory which perform the connection and disable SSR. PowerSync will not work with SSR at this time due to assets that need to be present on the client device.
+
+The PowerSync SDK is used in the `VehicleContext.js` context to write the changes to the `vehicle` variable to the local database and then PowerSync will push the changes to the Backend API, which then writes it to the source backend database.
+
+### PowerSync ENV
+
+There are two additional env variables that need to be added to the project inorder to connect successfully:
+
+```dotenv
+NEXT_PUBLIC_POWERSYNC_URL="<your-powersync-url>"
+NEXT_PUBLIC_BACKEND_BASE_URL="<your-backend-base-url>"
+```
