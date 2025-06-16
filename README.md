@@ -83,7 +83,9 @@ NEXT_PUBLIC_ENV="local"
 - Check that your MongoDB Atlas cluster is properly set up and accessible.
 - Verify that your Google Cloud Vertex AI and Speech-to-Text APIs are enabled.
 
-## PowerSync Integration
+## PowerSync Integration (Optional)
+
+For a more realistic setup, you can add additional onboard capabilities by using an embedded database to hold your data and seamlessly sync it to the cloud. Since this demo highlights mostly the cloud components of the assistant, you will be able to run it without PowerSync, but we encourage you to do the full setup for a more complete view of the demo.
 
 The application has been integrated with PowerSync for local-first capabilities and uses the default IndexedDB VFS solution. The `./src/lib/powersync` directory contains all the files used for setup and talks to a separately hosted backend API for generating tokens, validating tokens and handling the upload to the source MongoDB database.
 
@@ -91,9 +93,13 @@ There are also two `providers` in the `./src/components/providers` directory whi
 
 The PowerSync SDK is used in the `VehicleContext.js` context to write the changes to the `vehicle` variable to the local database and then PowerSync will push the changes to the Backend API, which then writes it to the source backend database.
 
-### PowerSync ENV
+### Set up the PowerSync backend
 
-There are two additional env variables that need to be added to the project inorder to connect successfully:
+The PowerSync backend provides endpoints for token generation, public JWKS keys, and handles writes to the source MongoDB Atlas database. You can find the backend repository and full setup instructions here: [genai-in-car-voice-assistant-backend](https://github.com/powersync-product-success/genai-in-car-voice-assistant-backend).
+
+### Add PowerSync ENV variables
+
+After setting up the backend, there are two additional environment variables that need to be added to the project in order to connect successfully:
 
 ```dotenv
 NEXT_PUBLIC_POWERSYNC_URL="<your-powersync-url>"
