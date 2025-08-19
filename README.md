@@ -95,7 +95,16 @@ The PowerSync SDK is used in the `VehicleContext.js` context to write the change
 
 ### Set up the PowerSync backend
 
-The PowerSync backend provides endpoints for token generation, public JWKS keys, and handles writes to the source MongoDB Atlas database. You can find the backend repository and full setup instructions here: [genai-in-car-voice-assistant-backend](https://github.com/powersync-product-success/genai-in-car-voice-assistant-backend).
+PowerSync requires a backend API interface to upload writes to MongoDB. There are currently two options:
+
+- **Custom self-hosted backend:** If you already have a backend application as part of your stack, you should use your existing backend. If you don’t yet have one, PowerSync provides example implementations in Node.js, Django, and Rails. See [backend examples](https://docs.powersync.com/resources/demo-apps-example-projects#backend-examples).
+
+- **Serverless cloud functions (hosted/managed):** Alternatively, you can use CloudCode, a serverless cloud functions environment provided by PowerSync. A template is available as a turnkey starting point. See the [CloudCode guide](https://docs.powersync.com/usage/tools/cloudcode).
+
+**How writes work:**
+
+- The client-side application performs writes directly on the local SQLite database. These writes are automatically placed into an upload queue by the PowerSync Client SDK.
+- The SDK uses a developer-defined `uploadData()` function to manage uploading those writes sequentially to the backend.
 
 ### Add PowerSync ENV variables
 
