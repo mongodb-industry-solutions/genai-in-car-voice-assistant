@@ -1,7 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
-const dbName = process.env.DATABASE_NAME;
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
 
 let client;
 let clientPromise;
@@ -17,6 +16,7 @@ if (!global._mongoClientPromise) {
 async function vectorSearch(queryVector) {
   try {
     const client = await clientPromise;
+    const dbName = process.env.DATABASE_NAME || "test";
     const db = client.db(dbName);
     const manualsCollection = db.collection("manuals");
 
