@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+cicd-kanopy/
 
 # debug
 npm-debug.log*
@@ -48,3 +49,4 @@ docker-compose-ecs.yml
 
 # IDE
 .idea
+gcp-credential-config.json

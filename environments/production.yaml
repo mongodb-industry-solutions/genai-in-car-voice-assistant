@@ -1,0 +1,48 @@
+# Production Environment Configuration for GenAI In-Car Voice Assistant
+# Kanopy Deployment - Industry Solutions
+
+# Service Account Configuration (GCP Workload Identity)
+serviceAccount:
+  enabled: true
+  name: genai-in-car-va-gcp-sa-prod  # Production K8s SA
+
+# Mount GCP credential config (PRODUCTION)
+volumeConfigMaps:
+  - name: gcp-wif-config-prod
+    path: /etc/gcp
+
+# Environment variables
+env:
+  NODE_ENV: production
+
+  # GCP Configuration
+  GOOGLE_APPLICATION_CREDENTIALS: /etc/gcp/credential-configuration.json
+  GCP_PROJECT_ID: manufacturing-project-425012
+  GCP_LOCATION: us-central1
+
+  # Vertex AI Configuration
+  VERTEXAI_COMPLETIONS_MODEL: gemini-2.0-flash-001
+  VERTEXAI_EMBEDDINGS_MODEL: text-embedding-005
+  VERTEXAI_API_ENDPOINT: us-central1-aiplatform.googleapis.com
+
+  # Frontend Configuration
+  NEXT_PUBLIC_ENV: production
+
+# Secrets (stored in Kubernetes via helm ksec)
+envSecrets:
+  # MongoDB Configuration
+  MONGODB_URI: genai-in-car-va-secrets-prod
+  DATABASE_NAME: genai-in-car-va-secrets-prod
+
+  # PowerSync Configuration (if needed)
+  POWERSYNC_URL: genai-in-car-va-secrets-prod
+  POWERSYNC_TOKEN: genai-in-car-va-secrets-prod
+
+# Resource limits (higher for production)
+resources:
+  limits:
+    memory: 1Gi
+    cpu: 1000m
+  requests:
+    memory: 512Mi
+    cpu: 250m

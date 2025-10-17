@@ -33,8 +33,9 @@ COPY --from=builder /app/.env.production ./.env.production
 
 USER nextjs
 
-EXPOSE 3000
+# Kanopy requires port 8080
+EXPOSE 8080
 
-ENV PORT=3000
+ENV PORT=8080
 
 CMD ["npm", "start"]

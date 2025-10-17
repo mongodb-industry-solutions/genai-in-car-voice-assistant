@@ -1,0 +1,36 @@
+# Staging Environment Configuration for GenAI In-Car Voice Assistant
+# Kanopy Deployment - Industry Solutions
+
+# Service Account Configuration (GCP Workload Identity)
+serviceAccount:
+  enabled: true
+  name: genai-in-car-va-gcp-sa  # Must match the K8s SA created in GCP setup
+
+# Mount GCP credential config
+volumeConfigMaps:
+  - name: gcp-wif-config
+    path: /etc/gcp
+
+# Environment variables
+env:
+  NODE_ENV: staging
+
+  # GCP Configuration
+  GOOGLE_APPLICATION_CREDENTIALS: /etc/gcp/credential-configuration.json
+  GCP_PROJECT_ID: manufacturing-project-425012
+  GCP_LOCATION: us-central1
+
+  # Vertex AI Configuration
+  VERTEXAI_COMPLETIONS_MODEL: gemini-2.0-flash-001
+  VERTEXAI_EMBEDDINGS_MODEL: text-embedding-005
+  VERTEXAI_API_ENDPOINT: us-central1-aiplatform.googleapis.com
+
+  # Frontend Configuration
+  NEXT_PUBLIC_ENV: staging
+
+# Secrets (stored in Kubernetes via helm ksec)
+envSecrets:
+  # MongoDB Configuration
+  MONGODB_URI: genai-in-car-va-secrets-staging
+  DATABASE_NAME: genai-in-car-va-secrets-staging
+
