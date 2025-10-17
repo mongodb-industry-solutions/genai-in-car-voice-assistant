@@ -3,6 +3,9 @@ kind: pipeline
 type: kubernetes
 name: staging
 
+platform:
+  arch: arm64
+
 trigger:
   branch:
     - staging
