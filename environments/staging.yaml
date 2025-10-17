@@ -6,11 +6,6 @@ serviceAccount:
   enabled: true
   name: genai-in-car-va-gcp-sa  # Must match the K8s SA created in GCP setup
 
-# Mount GCP credential config
-volumeConfigMaps:
-  - name: gcp-wif-config
-    path: /etc/gcp
-
 # Environment variables
 env:
   NODE_ENV: staging
