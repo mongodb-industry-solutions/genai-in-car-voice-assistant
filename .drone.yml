@@ -49,11 +49,6 @@ steps:
         - "resources.limits.cpu=1000m"
         - "resources.requests.memory=512Mi"
         - "resources.requests.cpu=250m"
-        - "volumes[0].name=gcp-creds"
-        - "volumes[0].configMap.name=gcp-wif-config"
-        - "volumeMounts[0].name=gcp-creds"
-        - "volumeMounts[0].mountPath=/etc/gcp"
-        - "volumeMounts[0].readOnly=true"
       api_server: https://api.staging.corp.mongodb.com
       kubernetes_token:
         from_secret: staging_kubernetes_token
