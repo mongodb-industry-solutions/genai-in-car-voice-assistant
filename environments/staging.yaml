@@ -5,6 +5,18 @@
 serviceAccount:
   enabled: true
   name: genai-in-car-va-gcp-sa  # Must match the K8s SA created in GCP setup
+
+# Mount GCP credential config
+extraVolumes:
+  - name: gcp-creds
+    configMap:
+      name: gcp-wif-config
+
+extraVolumeMounts:
+  - name: gcp-creds
+    mountPath: /etc/gcp
+    readOnly: true
+
 # Environment variables
 env:
   NODE_ENV: staging
