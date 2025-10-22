@@ -6,15 +6,25 @@ serviceAccount:
   enabled: true
   name: genai-in-car-va-gcp-sa  # Must match the K8s SA created in GCP setup
 
-# Mount GCP credential config
+# Mount GCP credential config and service account token
 extraVolumes:
   - name: gcp-creds
     configMap:
       name: gcp-wif-config
+  - name: gcp-token
+    projected:
+      sources:
+      - serviceAccountToken:
+          path: token
+          expirationSeconds: 3600
+          audience: "//iam.googleapis.com/projects/362614368442/locations/global/workloadIdentityPools/kanopy-manufacturing-wif-pool/providers/kanopy-manufacturing-provider"
 
 extraVolumeMounts:
   - name: gcp-creds
     mountPath: /etc/gcp
+    readOnly: true
+  - name: gcp-token
+    mountPath: /var/run/service-account
     readOnly: true
 
 # Environment variables
