@@ -4,12 +4,28 @@
 # Service Account Configuration (GCP Workload Identity)
 serviceAccount:
   enabled: true
-  name: genai-in-car-va-gcp-sa-prod  # Production K8s SA
+  name: genai-car-va-sa-prod  # Production K8s SA
 
-# Mount GCP credential config (PRODUCTION)
-volumeConfigMaps:
-  - name: gcp-wif-config-prod
-    path: /etc/gcp
+# Mount GCP credential config and service account token (PRODUCTION)
+extraVolumes:
+  - name: gcp-creds
+    configMap:
+      name: gcp-wif-config-prod
+  - name: gcp-token
+    projected:
+      sources:
+      - serviceAccountToken:
+          path: token
+          expirationSeconds: 3600
+          audience: "//iam.googleapis.com/projects/362614368442/locations/global/workloadIdentityPools/kanopy-mfg-wif-pool-prod/providers/kanopy-mfg-provider-prod"
+
+extraVolumeMounts:
+  - name: gcp-creds
+    mountPath: /etc/gcp
+    readOnly: true
+  - name: gcp-token
+    mountPath: /var/run/service-account
+    readOnly: true
 
 # Environment variables
 env:
@@ -33,16 +49,3 @@ envSecrets:
   # MongoDB Configuration
   MONGODB_URI: genai-in-car-va-secrets-prod
   DATABASE_NAME: genai-in-car-va-secrets-prod
-
-  # PowerSync Configuration (if needed)
-  POWERSYNC_URL: genai-in-car-va-secrets-prod
-  POWERSYNC_TOKEN: genai-in-car-va-secrets-prod
-
-# Resource limits (higher for production)
-resources:
-  limits:
-    memory: 1Gi
-    cpu: 1000m
-  requests:
-    memory: 512Mi
-    cpu: 250m

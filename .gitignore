@@ -50,3 +50,4 @@ docker-compose-ecs.yml
 # IDE
 .idea
 gcp-credential-config.json
+gcp-credential-config-prod.json
