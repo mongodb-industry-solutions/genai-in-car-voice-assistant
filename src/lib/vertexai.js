@@ -7,11 +7,11 @@ import {
 import { PredictionServiceClient, helpers } from "@google-cloud/aiplatform";
 import { SAMPLE_CONVERSATION } from "./const";
 
-const project = process.env.GCP_PROJECT_ID;
-const location = process.env.GCP_LOCATION;
-const completionsModel = process.env.VERTEXAI_COMPLETIONS_MODEL;
-const embeddingsModel = process.env.VERTEXAI_EMBEDDINGS_MODEL;
-const apiEndpoint = process.env.VERTEXAI_API_ENDPOINT;
+const project = process.env.GCP_PROJECT_ID || "default-project";
+const location = process.env.GCP_LOCATION || "us-central1";
+const completionsModel = process.env.VERTEXAI_COMPLETIONS_MODEL || "gemini-2.0-flash-001";
+const embeddingsModel = process.env.VERTEXAI_EMBEDDINGS_MODEL || "text-embedding-005";
+const apiEndpoint = process.env.VERTEXAI_API_ENDPOINT || "us-central1-aiplatform.googleapis.com";
 
 const vertexAIClient = new VertexAI({ project, location });
 const predictionServiceClient = new PredictionServiceClient({
