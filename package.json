@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "next-ws patch"
+    "prepare": "echo y | next-ws patch"
   },
   "dependencies": {
     "@google-cloud/aiplatform": "^4.1.0",
