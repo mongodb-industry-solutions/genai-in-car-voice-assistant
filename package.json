@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "next-ws patch"
+    "prepare": "echo y | next-ws patch"
   },
   "dependencies": {
     "@google-cloud/aiplatform": "^4.1.0",
@@ -36,7 +36,7 @@
     "mongodb": "^6.15.0",
     "next-ws": "^2.0.5",
     "js-logger": "^1.6.1",
-    "next": "^15.2.4",
+    "next": "^15.5.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "uuid": "^11.1.0",
