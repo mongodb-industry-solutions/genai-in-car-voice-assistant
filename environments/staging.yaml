@@ -50,3 +50,10 @@ envSecrets:
   MONGODB_URI: genai-in-car-va-secrets-staging
   DATABASE_NAME: genai-in-car-va-secrets-staging
 
+# Kanopy security and ownership (requires web-app chart v4.30.0+)
+security:
+  dataClassification: "Internal"
+  dataDesignation: ["MI"]
+
+ownership:
+  driEmail: javier.guajardo@mongodb.com
