@@ -33,7 +33,7 @@
     "@leafygreen-ui/tooltip": "^14.3.1",
     "@leafygreen-ui/typography": "^22.2.4",
     "mongodb": "^7.3.0",
-    "next-ws": "^2.0.5",
+    "next-ws": "^2.2.7",
     "js-logger": "^1.6.1",
     "next": "^15.5.9",
     "react": "^19.0.0",

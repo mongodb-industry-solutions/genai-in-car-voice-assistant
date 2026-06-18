@@ -6,7 +6,7 @@ export function GET() {
   return new Response("Upgrade Required", { status: 426 });
 }
 
-export function SOCKET(client, _request, _server) {
+export function UPGRADE(client, _server, _request) {
   if (shouldLogConnections) {
     console.log("Client connected");
   }
