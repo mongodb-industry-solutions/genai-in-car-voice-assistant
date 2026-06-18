@@ -8,8 +8,10 @@ import { SAMPLE_CONVERSATION } from "../const";
 
 const project = process.env.GCP_PROJECT_ID || "default-project";
 const location = process.env.GCP_LOCATION || "us-central1";
-const completionsModel = process.env.VERTEXAI_COMPLETIONS_MODEL || "gemini-2.5-flash";
-const embeddingsModel = process.env.VERTEXAI_EMBEDDINGS_MODEL || "text-embedding-005";
+const completionsModel =
+  process.env.VERTEXAI_COMPLETIONS_MODEL || "gemini-2.5-flash";
+const embeddingsModel =
+  process.env.VERTEXAI_EMBEDDINGS_MODEL || "text-embedding-005";
 
 const ai = new GoogleGenAI({ vertexai: true, project, location });
 
@@ -76,12 +78,15 @@ const systemInstruction = `
         The user will be driving while talking to you, so be concise. 
         Responses must be under 140 characters. 
         No need to greet the user.
-        You can enterntain your user with jokes and conversation if the user requests it.
+        You can entertain your user with jokes and conversation if the user requests it.
 
         If a function is needed, call the appropriate one.
+        When the user implies something is wrong with the car, call fetchDTCCodes first to run a diagnostics check.
+        Do not ask the user to describe a warning light, this information is already available in the diagnostic results.
+        Translate diagnostic results into plain driver language and keep the answer natural, calm, and concise.
 
         Your main actions are:
-        1. Diagnose an issue by fetching Diagnostic Trouble Codes (DTC Codes) from the car.
+        1. Diagnose an issue by checking the vehicle's active diagnostics.
         2. Suggest the next appropriate action by checking the car manual.
         3. If the user can benefit from going to a service station, suggest adding it to the route.
         4. If the user is done, close the chat.

@@ -155,17 +155,20 @@ const useChat = ({
           const dtcList = vehicleRef.current.Diagnostics.DTCList || [];
           const dtcCount = vehicleRef.current.Diagnostics.DTCCount || 0;
 
-          const enrichedDtcList = dtcList.map((dtcCode) => {
+          const diagnostics = dtcList.map((dtcCode) => {
             const dtc = dtcCodesDictionary.find(
               (entry) => entry.code === dtcCode
             );
             if (dtc) {
-              return `${dtc.code} - ${dtc.description}`;
+              return {
+                code: dtc.code,
+                description: dtc.description,
+              };
             }
-            return dtcCode;
+            return { code: dtcCode };
           });
 
-          const dtcResponse = { dtcCount, dtcList: enrichedDtcList };
+          const dtcResponse = { dtcCount, diagnostics };
           replyToFunctionCall(functionCall.name, dtcResponse);
 
           addLog(sessionId, functionCall.name, "response", dtcResponse);
