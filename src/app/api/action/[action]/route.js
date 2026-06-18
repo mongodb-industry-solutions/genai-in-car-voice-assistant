@@ -14,7 +14,16 @@ export async function POST(req, { params }) {
     }
 
     const { action } = await params;
-    const body = await req.json();
+
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { message: "Invalid or empty JSON body" },
+        { status: 400 },
+      );
+    }
 
     const {
       collection,
