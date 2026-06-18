@@ -10,10 +10,9 @@
     "prepare": "echo y | next-ws patch"
   },
   "dependencies": {
-    "@google-cloud/aiplatform": "^4.1.0",
+    "@google/genai": "^2.8.0",
     "@google-cloud/speech": "^7.0.1",
     "@google-cloud/text-to-speech": "^6.0.1",
-    "@google-cloud/vertexai": "^1.9.3",
     "@journeyapps/wa-sqlite": "^1.2.2",
     "@powersync/react": "^1.5.2",
     "@powersync/web": "^1.17.0",
@@ -33,7 +32,7 @@
     "@leafygreen-ui/toggle": "^11.0.6",
     "@leafygreen-ui/tooltip": "^13.0.8",
     "@leafygreen-ui/typography": "^20.1.4",
-    "mongodb": "^6.15.0",
+    "mongodb": "^7.3.0",
     "next-ws": "^2.0.5",
     "js-logger": "^1.6.1",
     "next": "^15.5.9",

@@ -1,4 +1,8 @@
-import { getSpeechRecognitionStream } from "@/lib/speech";
+import { getSpeechRecognitionStream } from "@/lib/gcp/speech";
+
+export function GET() {
+  return new Response("Upgrade Required", { status: 426 });
+}
 
 export function SOCKET(client, request, server) {
   console.log("Client connected");

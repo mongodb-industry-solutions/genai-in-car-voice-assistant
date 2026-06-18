@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { convertTextToAudio } from "@/lib/speech";
+import { convertTextToAudio } from "@/lib/gcp/speech";
 
 export async function POST(req) {
   try {

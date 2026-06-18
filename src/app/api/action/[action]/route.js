@@ -1,4 +1,4 @@
-import { clientPromise } from "@/lib/mongodb";
+import { clientPromise } from "@/lib/mongodb/vectorSearch";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 
