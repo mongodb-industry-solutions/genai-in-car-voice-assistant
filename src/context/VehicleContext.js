@@ -24,7 +24,7 @@ const isPowerSyncEnabled = () => {
 
   if (!powersyncUrl || !backendBaseUrl) {
     console.warn(
-      "PowerSync is disabled: Missing environment variables NEXT_PUBLIC_POWERSYNC_URL or NEXT_PUBLIC_BACKEND_BASE_URL"
+      "PowerSync is disabled: Missing environment variables NEXT_PUBLIC_POWERSYNC_URL or NEXT_PUBLIC_BACKEND_BASE_URL",
     );
     return false;
   }
@@ -110,12 +110,12 @@ export const VehicleProvider = ({ children }) => {
             vehicle.Speed,
             vehicle.TraveledDistance,
             vehicleId,
-          ]
+          ],
         );
       } catch (error) {
         console.warn(
           "Failed to sync vehicle data with PowerSync:",
-          error.message
+          error.message,
         );
       }
     }

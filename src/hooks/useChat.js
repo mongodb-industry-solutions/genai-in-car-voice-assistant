@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useChatSession } from "@/context/ChatSessionContext";
 import { useVehicle } from "@/context/VehicleContext";
 import { dtcCodesDictionary } from "@/lib/const";
@@ -16,6 +16,7 @@ const useChat = ({
   const processorRef = useRef(null);
   const audioContextRef = useRef(null);
   const audioInputRef = useRef(null);
+  const mediaStreamRef = useRef(null);
   const vehicleRef = useRef(null);
 
   const sessionId = useChatSession();
@@ -29,6 +30,53 @@ const useChat = ({
   useEffect(() => {
     vehicleRef.current = vehicle;
   }, [vehicle]);
+
+  const cleanupRecording = useCallback(({ updateRecordingState = true } = {}) => {
+    if (updateRecordingState) {
+      setIsRecording(false);
+    }
+
+    if (socketRef.current) {
+      const socket = socketRef.current;
+      socket.onopen = null;
+      socket.onclose = null;
+      socket.onmessage = null;
+      if (
+        socket.readyState === WebSocket.OPEN ||
+        socket.readyState === WebSocket.CONNECTING
+      ) {
+        socket.close();
+      }
+      socketRef.current = null;
+    }
+
+    if (processorRef.current) {
+      processorRef.current.disconnect();
+      processorRef.current.port.onmessage = null;
+      processorRef.current = null;
+    }
+
+    if (audioInputRef.current) {
+      audioInputRef.current.disconnect();
+      audioInputRef.current = null;
+    }
+
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
+  }, [setIsRecording]);
+
+  useEffect(() => {
+    return () => {
+      cleanupRecording({ updateRecordingState: false });
+    };
+  }, [cleanupRecording]);
 
   const handleLLMResponse = async (userMessage) => {
     setIsTyping(true);
@@ -50,6 +98,7 @@ const useChat = ({
 
     if (!response.body) {
       console.error("Response stream is empty.");
+      setIsTyping(false);
       return;
     }
 
@@ -61,9 +110,9 @@ const useChat = ({
     const processStream = async () => {
       const { value, done } = await reader.read();
       if (done && !isFunctionCallActive) {
-        setIsTyping(false);
         if (partialMessage && !isSpeakerMuted)
           await handleTextToSpeech(partialMessage);
+        setIsTyping(false);
         return;
       }
 
@@ -230,6 +279,15 @@ const useChat = ({
   };
 
   const startRecording = async () => {
+    const activeSocket = socketRef.current;
+    if (
+      activeSocket &&
+      (activeSocket.readyState === WebSocket.OPEN ||
+        activeSocket.readyState === WebSocket.CONNECTING)
+    ) {
+      return;
+    }
+
     setIsRecording(true);
 
     setMessagesToShow((prev) => {
@@ -241,85 +299,80 @@ const useChat = ({
       return [...prev, { sender: "user", text: "" }];
     });
 
-    // Initialize WebSocket connection to the server
-    socketRef.current = new WebSocket(
-      `${protocol}://${host}/api/gcp/speechToText`
-    );
-    socketRef.current.onopen = () => {
-      console.log("WebSocket connection established");
-    };
+    try {
+      // Initialize WebSocket connection to the server
+      socketRef.current = new WebSocket(
+        `${protocol}://${host}/api/gcp/speechToText`
+      );
+      socketRef.current.onopen = () => {
+        console.log("WebSocket connection established");
+      };
 
-    socketRef.current.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
+      socketRef.current.onclose = () => {
+        console.log("WebSocket connection closed");
+        socketRef.current = null;
+      };
 
-    socketRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setMessagesToShow((prev) => {
-        const updatedMessages = [...prev];
-        // Replace the last user message (empty one) with the final transcription
-        updatedMessages[updatedMessages.length - 1] = {
-          sender: "user",
-          text: data.text,
-        };
-        return updatedMessages;
+      socketRef.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setMessagesToShow((prev) => {
+          const updatedMessages = [...prev];
+          // Replace the last user message (empty one) with the final transcription
+          updatedMessages[updatedMessages.length - 1] = {
+            sender: "user",
+            text: data.text,
+          };
+          return updatedMessages;
+        });
+        if (data.final && data.text.trim() !== "") {
+          stopRecording();
+          handleLLMResponse(data.text);
+        }
+      };
+
+      // Set up Web Audio API
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: selectedDevice,
+          sampleRate: 16000,
+          channelCount: 1,
+        },
+        video: false,
       });
-      if (data.final && data.text.trim() !== "") {
-        stopRecording();
-        handleLLMResponse(data.text);
-      }
-    };
+      mediaStreamRef.current = stream;
 
-    // Set up Web Audio API
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        deviceId: selectedDevice,
-        sampleRate: 16000,
-        channelCount: 1,
-      },
-      video: false,
-    });
+      audioContextRef.current = new (window.AudioContext ||
+        window.webkitAudioContext)();
 
-    audioContextRef.current = new (window.AudioContext ||
-      window.webkitAudioContext)();
+      await audioContextRef.current.audioWorklet.addModule(
+        "/worklets/recorderWorkletProcessor.js"
+      );
 
-    await audioContextRef.current.audioWorklet.addModule(
-      "/worklets/recorderWorkletProcessor.js"
-    );
+      audioInputRef.current =
+        audioContextRef.current.createMediaStreamSource(stream);
 
-    audioInputRef.current =
-      audioContextRef.current.createMediaStreamSource(stream);
+      processorRef.current = new AudioWorkletNode(
+        audioContextRef.current,
+        "recorder.worklet"
+      );
 
-    processorRef.current = new AudioWorkletNode(
-      audioContextRef.current,
-      "recorder.worklet"
-    );
+      processorRef.current.connect(audioContextRef.current.destination);
+      audioInputRef.current.connect(processorRef.current);
 
-    processorRef.current.connect(audioContextRef.current.destination);
-    audioInputRef.current.connect(processorRef.current);
-
-    processorRef.current.port.onmessage = (event) => {
-      const audioData = event.data;
-      if (socketRef.current.readyState === WebSocket.OPEN) {
-        socketRef.current.send(audioData);
-      }
-    };
+      processorRef.current.port.onmessage = (event) => {
+        const audioData = event.data;
+        if (socketRef.current?.readyState === WebSocket.OPEN) {
+          socketRef.current.send(audioData);
+        }
+      };
+    } catch (error) {
+      console.error("Error starting recording:", error);
+      cleanupRecording();
+    }
   };
 
   const stopRecording = () => {
-    setIsRecording(false);
-    if (socketRef.current) {
-      socketRef.current.close();
-    }
-    if (processorRef.current) {
-      processorRef.current.disconnect();
-    }
-    if (audioInputRef.current) {
-      audioInputRef.current.disconnect();
-    }
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-    }
+    cleanupRecording();
   };
 
   const handleTextToSpeech = async (text) => {
@@ -335,7 +388,11 @@ const useChat = ({
 
       if (audioContent) {
         const audio = new Audio(`data:audio/wav;base64,${audioContent}`);
-        audio.play(); // Play the audio
+        await new Promise((resolve, reject) => {
+          audio.onended = resolve;
+          audio.onerror = reject;
+          audio.play().catch(reject);
+        });
       }
     } catch (error) {
       console.error("Error in text-to-speech:", error);

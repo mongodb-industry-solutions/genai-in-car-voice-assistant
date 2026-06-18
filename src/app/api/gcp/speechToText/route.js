@@ -1,11 +1,15 @@
 import { getSpeechRecognitionStream } from "@/lib/gcp/speech";
 
+const shouldLogConnections = process.env.NODE_ENV !== "production";
+
 export function GET() {
   return new Response("Upgrade Required", { status: 426 });
 }
 
-export function SOCKET(client, request, server) {
-  console.log("Client connected");
+export function SOCKET(client, _request, _server) {
+  if (shouldLogConnections) {
+    console.log("Client connected");
+  }
 
   // Creating the Google Cloud Speech-to-Text recognition stream
   let recognizeStream = null;
@@ -34,7 +38,9 @@ export function SOCKET(client, request, server) {
 
   // Close the recognition stream when the WebSocket connection is closed
   client.on("close", () => {
-    console.log("Client disconnected");
+    if (shouldLogConnections) {
+      console.log("Client disconnected");
+    }
     if (recognizeStream) {
       recognizeStream.end();
       recognizeStream = null;

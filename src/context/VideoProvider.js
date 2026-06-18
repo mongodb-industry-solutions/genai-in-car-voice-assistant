@@ -21,10 +21,10 @@ export const VideoProvider = ({ children }) => {
       };
 
       const fullScreenVideoBlob = await loadVideoBlob(
-        "/videos/full-screen.mp4"
+        "/videos/full-screen.mp4",
       );
       const sharedScreenVideoBlob = await loadVideoBlob(
-        "/videos/shared-screen.mp4"
+        "/videos/shared-screen.mp4",
       );
 
       setVideoSources({

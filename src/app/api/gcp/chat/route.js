@@ -83,7 +83,7 @@ export async function POST(req) {
     console.error("API error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -106,7 +106,7 @@ async function addLog(sessionId, toolName, type, details) {
           },
         },
       },
-      { upsert: true }
+      { upsert: true },
     );
   } catch (error) {
     console.error("Error logging tool call:", error);

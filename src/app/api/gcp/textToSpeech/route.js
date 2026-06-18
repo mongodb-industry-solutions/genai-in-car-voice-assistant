@@ -14,7 +14,7 @@ export async function POST(req) {
     console.error("Error synthesizing speech:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

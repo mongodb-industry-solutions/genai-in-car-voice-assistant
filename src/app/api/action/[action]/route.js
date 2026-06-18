@@ -9,7 +9,7 @@ export async function POST(req, { params }) {
     if (!database) {
       return NextResponse.json(
         { message: 'Invalid/Missing environment variable: "DATABASE_NAME"' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(req, { params }) {
     if (!collection || (!filter && action !== "aggregate")) {
       return NextResponse.json(
         { message: "Missing required fields: collection, filter/pipeline" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,7 +70,7 @@ export async function POST(req, { params }) {
         if (!update) {
           return NextResponse.json(
             { message: "Missing required field: update" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -82,7 +82,7 @@ export async function POST(req, { params }) {
         if (!update) {
           return NextResponse.json(
             { message: "Missing required field: update" },
-            { status: 400 }
+            { status: 400 },
           );
         }
         result = await col.updateMany(filter, update, {
@@ -96,7 +96,7 @@ export async function POST(req, { params }) {
         if (!pipeline) {
           return NextResponse.json(
             { message: "Missing required field: pipeline" },
-            { status: 400 }
+            { status: 400 },
           );
         }
         result = await col.aggregate(pipeline).toArray();
@@ -104,7 +104,7 @@ export async function POST(req, { params }) {
       default:
         return NextResponse.json(
           { message: "Invalid action" },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -113,7 +113,7 @@ export async function POST(req, { params }) {
     console.error("Error handling request:", error);
     return NextResponse.json(
       { message: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

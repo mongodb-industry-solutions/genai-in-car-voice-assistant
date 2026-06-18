@@ -47,7 +47,7 @@ const useChatSimulate = ({
         }, 250);
       });
     },
-    [playAudioSimulate]
+    [playAudioSimulate],
   );
 
   const handleToolSimulate = useCallback(
@@ -72,7 +72,7 @@ const useChatSimulate = ({
         }
       });
     },
-    [setIsRecalculating, setCurrentView]
+    [setIsRecalculating, setCurrentView],
   );
 
   const handleNextMessageSimulate = useCallback(async () => {
