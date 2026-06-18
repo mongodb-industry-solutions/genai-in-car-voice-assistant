@@ -44,7 +44,7 @@ async function vectorSearch(queryVector) {
   } catch (error) {
     console.error(
       `Error performing vector search for product ${productId}:`,
-      error
+      error,
     );
     throw error;
   }

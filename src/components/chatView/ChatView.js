@@ -73,11 +73,14 @@ const ChatView = ({
     handleLLMResponse(text);
   };
 
-  // Stop recording automatically after the LLM response is sent
+  // Stop recording automatically after the LLM response is sent.
+  // Intentionally only re-evaluates when typing/simulation state changes;
+  // isRecording, writerMode and startRecording are read as current values.
   useEffect(() => {
     if (!simulationMode && !isTyping && !isRecording && !writerMode) {
       startRecording();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTyping, simulationMode]);
 
   return (

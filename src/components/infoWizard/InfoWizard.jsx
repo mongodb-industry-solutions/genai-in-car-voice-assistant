@@ -38,8 +38,8 @@ const InfoWizard = ({
         <div className={styles.modalContent}>
           <Tabs
             aria-label="info wizard tabs"
-            setSelected={setSelected}
-            selected={selected}
+            value={selected}
+            onValueChange={setSelected}
           >
             {sections.map((tab, tabIndex) => (
               <Tab key={tabIndex} name={tab.heading}>
