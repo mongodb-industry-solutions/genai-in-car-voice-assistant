@@ -9,7 +9,6 @@ export async function POST(req) {
 
     const responseStream = await chat.sendMessageStream({ message });
     let functionCall = null;
-    let assistantResponse = "";
 
     // Create a stream response
     const stream = new ReadableStream({
@@ -24,7 +23,6 @@ export async function POST(req) {
             } else {
               const token = chunk.text || "";
               controller.enqueue(token);
-              assistantResponse += token;
             }
           }
 

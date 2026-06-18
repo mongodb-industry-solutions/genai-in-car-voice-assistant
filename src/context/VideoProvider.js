@@ -11,6 +11,9 @@ export const VideoProvider = ({ children }) => {
   });
 
   useEffect(() => {
+    let fullScreenVideoBlob = null;
+    let sharedScreenVideoBlob = null;
+
     const loadVideos = async () => {
       if (typeof window === "undefined") return;
 
@@ -20,12 +23,8 @@ export const VideoProvider = ({ children }) => {
         return URL.createObjectURL(blob); // Convert to Blob URL
       };
 
-      const fullScreenVideoBlob = await loadVideoBlob(
-        "/videos/full-screen.mp4",
-      );
-      const sharedScreenVideoBlob = await loadVideoBlob(
-        "/videos/shared-screen.mp4",
-      );
+      fullScreenVideoBlob = await loadVideoBlob("/videos/full-screen.mp4");
+      sharedScreenVideoBlob = await loadVideoBlob("/videos/shared-screen.mp4");
 
       setVideoSources({
         fullScreenVideo: fullScreenVideoBlob,
@@ -36,10 +35,8 @@ export const VideoProvider = ({ children }) => {
     loadVideos();
 
     return () => {
-      if (videoSources.fullScreenVideo)
-        URL.revokeObjectURL(videoSources.fullScreenVideo);
-      if (videoSources.sharedScreenVideo)
-        URL.revokeObjectURL(videoSources.sharedScreenVideo);
+      if (fullScreenVideoBlob) URL.revokeObjectURL(fullScreenVideoBlob);
+      if (sharedScreenVideoBlob) URL.revokeObjectURL(sharedScreenVideoBlob);
     };
   }, []);
 

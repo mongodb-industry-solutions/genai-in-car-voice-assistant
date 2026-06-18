@@ -304,12 +304,9 @@ const useChat = ({
       socketRef.current = new WebSocket(
         `${protocol}://${host}/api/gcp/speechToText`
       );
-      socketRef.current.onopen = () => {
-        console.log("WebSocket connection established");
-      };
+      socketRef.current.onopen = () => {};
 
       socketRef.current.onclose = () => {
-        console.log("WebSocket connection closed");
         socketRef.current = null;
       };
 

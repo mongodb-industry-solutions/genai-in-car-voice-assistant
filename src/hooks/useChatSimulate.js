@@ -47,7 +47,7 @@ const useChatSimulate = ({
         }, 250);
       });
     },
-    [playAudioSimulate],
+    [playAudioSimulate, setIsTyping, setMessagesToShow],
   );
 
   const handleToolSimulate = useCallback(
@@ -87,7 +87,13 @@ const useChatSimulate = ({
       }
       setMessageIndex((prev) => prev + 1);
     }
-  }, [messageIndex, handleToolSimulate, typeMessageSimulate]);
+  }, [
+    messageIndex,
+    messages,
+    handleToolSimulate,
+    typeMessageSimulate,
+    setMessagesToShow,
+  ]);
 
   const startConversationSimulation = useCallback(async () => {
     if (messageIndex < messages.length) {
@@ -103,7 +109,7 @@ const useChatSimulate = ({
 
       return () => clearTimeout(timeout);
     }
-  }, [handleNextMessageSimulate, setSuggestedAnswer]);
+  }, [messageIndex, messages, handleNextMessageSimulate, setSuggestedAnswer]);
 
   return {
     typeMessageSimulate,

@@ -81,8 +81,6 @@ export const VehicleProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("Vehicle State Updated:", vehicle);
-
     // Only sync with PowerSync if it's enabled
     if (powerSyncEnabled && powersync) {
       // Stringify the objects and write to the database.
