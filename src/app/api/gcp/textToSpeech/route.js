@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { convertTextToAudio } from "@/lib/speech";
+import { convertTextToAudio } from "@/lib/gcp/speech";
 
 export async function POST(req) {
   try {
@@ -14,7 +14,7 @@ export async function POST(req) {
     console.error("Error synthesizing speech:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

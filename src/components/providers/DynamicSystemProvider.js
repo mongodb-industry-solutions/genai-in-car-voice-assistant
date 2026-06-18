@@ -23,7 +23,7 @@ export const DynamicSystemProvider = ({ children }) => {
   // If PowerSync is not enabled, return children directly without the provider
   if (!isPowerSyncEnabled()) {
     console.warn(
-      "PowerSync is disabled: Missing environment variables. App will run without PowerSync."
+      "PowerSync is disabled: Missing environment variables. App will run without PowerSync.",
     );
     return children;
   }

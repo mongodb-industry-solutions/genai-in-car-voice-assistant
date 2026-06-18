@@ -1,35 +1,32 @@
 import { NextResponse } from "next/server";
-import { startChatSession, createEmbedding } from "@/lib/vertexai";
-import { vectorSearch, clientPromise } from "@/lib/mongodb";
+import { startChatSession, createEmbedding } from "@/lib/gcp/genai";
+import { vectorSearch, clientPromise } from "@/lib/mongodb/vectorSearch";
 
 export async function POST(req) {
   try {
     const { sessionId, message } = await req.json();
     const chat = startChatSession(sessionId);
 
-    const result = await chat.sendMessageStream(message);
+    const responseStream = await chat.sendMessageStream({ message });
     let functionCall = null;
-    let assistantResponse = "";
 
     // Create a stream response
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const item of result.stream) {
-            const candidate = item.candidates[0];
+          for await (const chunk of responseStream) {
+            const chunkFunctionCall = chunk.functionCalls?.[0];
 
-            if (candidate.content?.parts?.[0]?.functionCall) {
-              functionCall = candidate.content.parts[0].functionCall;
+            if (chunkFunctionCall) {
+              functionCall = chunkFunctionCall;
               addLog(sessionId, functionCall.name, "call", functionCall);
             } else {
-              const token = candidate.content.parts?.[0]?.text || "";
+              const token = chunk.text || "";
               controller.enqueue(token);
-              assistantResponse += token;
             }
           }
 
           if (functionCall) {
-            await result.response;
             const { name, args } = functionCall;
 
             if (name === "consultManual") {
@@ -52,14 +49,12 @@ export async function POST(req) {
 
               addLog(sessionId, name, "response", functionResponseParts);
 
-              const followUpResult = await chat.sendMessageStream(
-                functionResponseParts
-              );
+              const followUpStream = await chat.sendMessageStream({
+                message: functionResponseParts,
+              });
 
-              for await (const item of followUpResult.stream) {
-                const token =
-                  item.candidates[0]?.content?.parts?.[0]?.text || "";
-                controller.enqueue(token);
+              for await (const chunk of followUpStream) {
+                controller.enqueue(chunk.text || "");
               }
             } else {
               // Client-side function calls (handled in frontend)
@@ -86,7 +81,7 @@ export async function POST(req) {
     console.error("API error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -109,7 +104,7 @@ async function addLog(sessionId, toolName, type, details) {
           },
         },
       },
-      { upsert: true }
+      { upsert: true },
     );
   } catch (error) {
     console.error("Error logging tool call:", error);

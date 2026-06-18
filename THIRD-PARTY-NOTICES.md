@@ -1707,9 +1707,9 @@ This project includes third-party packages listed below:
 - **Contact**: andrey@sitnik.ru
 
 ---
-### next-ws@2.0.6
+### next-ws@2.2.7
 - **License**: MIT
-- **Repository**: https://github.com/apteryxxyz/next-ws
+- **Repository**: https://github.com/k0d13/next-ws
 
 ---
 ### next@15.2.4

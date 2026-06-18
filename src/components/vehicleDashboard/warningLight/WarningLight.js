@@ -14,6 +14,8 @@ const WarningLight = ({ name, iconOn, iconOff, dtcCodes, isPlaying }) => {
     setIsOn(dtcCodes.some((code) => DTCList.includes(code)));
   }, [DTCList, dtcCodes]);
 
+  // Intentionally only triggers on isPlaying/name changes; including DTCList,
+  // dtcCodes or updateVehicle would reset/refire the timer on every update.
   useEffect(() => {
     if (isPlaying && name === "Engine Oil") {
       const timer = setTimeout(() => {
@@ -26,6 +28,7 @@ const WarningLight = ({ name, iconOn, iconOff, dtcCodes, isPlaying }) => {
 
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying, name]);
 
   const handleClick = () => {

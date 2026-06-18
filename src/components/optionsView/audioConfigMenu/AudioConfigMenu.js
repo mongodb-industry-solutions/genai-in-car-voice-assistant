@@ -17,13 +17,13 @@ const AudioConfigMenu = ({ isOpen, onClose, onConfirm }) => {
         .then(() =>
           navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
             const audioDevices = deviceInfos.filter(
-              (device) => device.kind === "audioinput"
+              (device) => device.kind === "audioinput",
             );
             setDevices(audioDevices);
             if (audioDevices.length > 0) {
               setSelectedDevice(audioDevices[0].deviceId);
             }
-          })
+          }),
         )
         .catch((error) => {
           console.error("Error accessing media devices:", error);
