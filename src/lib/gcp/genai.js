@@ -37,7 +37,7 @@ const functionDeclarations = [
       {
         name: "recalculateRoute",
         description:
-          "Recalculates the route when a new stop is added. By default this function will find the neares service station. Ask the user to confirm this action before executing.",
+          "Recalculates the route when a new stop is added. By default this function will find the nearest service station. Ask the user to confirm this action before executing.",
         parameters: {
           type: Type.OBJECT,
           properties: {},
@@ -52,7 +52,7 @@ const functionDeclarations = [
             query: {
               type: Type.STRING,
               description:
-                "A question that represent an enriched version of what the user wants to retrieve from the manual. It must be in the form of a question.",
+                "A question that represents an enriched version of what the user wants to retrieve from the manual. It must be in the form of a question.",
             },
           },
           required: ["query"],
