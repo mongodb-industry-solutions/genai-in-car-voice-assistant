@@ -14,9 +14,10 @@ if (!global._mongoClientPromise) {
 }
 
 async function vectorSearch(queryVector) {
+  const dbName = process.env.DATABASE_NAME || "test";
+
   try {
     const client = await clientPromise;
-    const dbName = process.env.DATABASE_NAME || "test";
     const db = client.db(dbName);
     const manualsCollection = db.collection("manuals");
 
@@ -43,7 +44,7 @@ async function vectorSearch(queryVector) {
     return relevantChunks;
   } catch (error) {
     console.error(
-      `Error performing vector search for product ${productId}:`,
+      `Error performing vector search on ${dbName}.manuals:`,
       error,
     );
     throw error;

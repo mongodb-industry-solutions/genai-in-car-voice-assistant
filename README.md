@@ -61,7 +61,6 @@ GCP_PROJECT_ID="<your-gcp-project-id>"
 GCP_LOCATION="us-central1"
 VERTEXAI_COMPLETIONS_MODEL="gemini-2.5-flash"
 VERTEXAI_EMBEDDINGS_MODEL="text-embedding-005"
-VERTEXAI_API_ENDPOINT="us-central1-aiplatform.googleapis.com"
 NEXT_PUBLIC_ENV="local"
 ```
 

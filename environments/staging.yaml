@@ -39,7 +39,6 @@ env:
   # Vertex AI Configuration
   VERTEXAI_COMPLETIONS_MODEL: gemini-2.5-flash
   VERTEXAI_EMBEDDINGS_MODEL: text-embedding-005
-  VERTEXAI_API_ENDPOINT: us-central1-aiplatform.googleapis.com
 
   # Frontend Configuration
   NEXT_PUBLIC_ENV: staging
