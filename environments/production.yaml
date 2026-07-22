@@ -35,6 +35,12 @@ env:
   GOOGLE_APPLICATION_CREDENTIALS: /etc/gcp/credential-configuration.json
   GCP_PROJECT_ID: manufacturing-project-425012
   GCP_LOCATION: us-central1
+  # Stop GCP client libs (google-auth-library/gcp-metadata) from probing the
+  # link-local metadata endpoint 169.254.169.254 — same IP as AWS IMDS.
+  # All GCP auth comes from the mounted WIF file, so the metadata probe is pure
+  # redundant auto-detection. Kanopy IMDS "Deny by Default" cutover.
+  GOOGLE_CLOUD_PROJECT: manufacturing-project-425012  # removes getProjectId() metadata path
+  METADATA_SERVER_DETECTION: none                      # hard-stops the metadata availability probe
 
   # Vertex AI Configuration
   VERTEXAI_COMPLETIONS_MODEL: gemini-2.5-flash
