@@ -70,17 +70,32 @@ NEXT_PUBLIC_ENV="local"
    ```bash
    npm install
    ```
-2. Start the development server:
+2. Create the `manual_vector_index` search index on the `manuals` collection (the `consultManual` tool queries this at chat time — without it, the assistant can diagnose warning lights but can't answer "what do I do about it"). In the Atlas UI, create an Atlas Vector Search index on `manuals` with:
+   ```json
+   {
+     "fields": [
+       { "type": "vector", "path": "embedding", "numDimensions": 768, "similarity": "cosine" }
+     ]
+   }
+   ```
+   Wait for the index status to show **Active** before continuing.
+3. Seed sample car manual content into `manuals`:
+   ```bash
+   node scripts/seed-manuals.js
+   ```
+   Safe to run again — it skips seeding if `manuals` already has documents.
+4. Start the development server:
    ```bash
    npm run dev
    ```
-3. Open **http://localhost:3000** in your browser to access the assistant and vehicle dashboard.
+5. Open **http://localhost:3000** in your browser to access the assistant and vehicle dashboard.
 
 ## Common Errors
 
 - Ensure you've created an `.env.local` file with valid API keys and environment variables.
 - Check that your MongoDB Atlas cluster is properly set up and accessible.
 - Verify that your Google Cloud Vertex AI and Speech-to-Text APIs are enabled.
+- **"consultManual" returns nothing / assistant can't give follow-up advice**: the `manual_vector_index` doesn't exist yet, or `manuals` is empty. Redo steps 2-3 of [Run it Locally](#run-it-locally).
 
 ## PowerSync Integration (Optional)
 
