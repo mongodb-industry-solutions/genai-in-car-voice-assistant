@@ -28,7 +28,7 @@ MongoDB Atlas plays a key role in this demo by providing:
 - **Vector Search for Context-Aware Responses:** Enhances voice assistant capabilities by retrieving relevant sections of the car manual based on user queries.
 - **Real-Time Syncing:** PowerSync’s MongoDB Connector ensures vehicle signal data is always up-to-date, whether on the cloud or in the vehicle.
 
-Learn more about MongoDB [here](https://www.mongodb.com/docs/manual/).
+Learn more about MongoDB [here](https://www.mongodb.com/docs/manual/?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=genai_in_car_voice_assistant&utm_term=learning.fuel).
 
 ## High-Level Architecture
 
@@ -37,7 +37,7 @@ Learn more about MongoDB [here](https://www.mongodb.com/docs/manual/).
 ## Tech Stack
 
 - **[Next.js](https://nextjs.org/)** for the frontend framework
-- **[MongoDB Atlas](https://www.mongodb.com/atlas)** for the database and vector search
+- **[MongoDB Atlas](https://www.mongodb.com/atlas?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=genai_in_car_voice_assistant&utm_term=learning.fuel)** for the database and vector search
 - **[Google Cloud Platform](https://cloud.google.com/)** for the LLM, speech-to-text, and embeddings
 - **[PowerSync](https://www.powersync.com/)** to persist vehicle data in MongoDB Atlas and keep it in sync
 
@@ -45,10 +45,18 @@ Learn more about MongoDB [here](https://www.mongodb.com/docs/manual/).
 
 Before running the demo, ensure you have the following:
 
-- A **MongoDB Atlas Cluster**
-- **Node.js 20** or higher
-- A **GCP account** with access to Vertex AI APIs
-- A **PowerSync account** for real-time data syncing
+- A **MongoDB Atlas Cluster**. If you don't have one yet, [sign up for free and deploy an M0 cluster](https://www.mongodb.com/cloud/atlas/register?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=genai_in_car_voice_assistant&utm_term=learning.fuel).
+- **Node.js 22** or higher (see `.nvmrc`)
+- A **GCP project** with billing enabled and the following APIs turned on: `aiplatform.googleapis.com` (Vertex AI), `speech.googleapis.com` (Speech-to-Text), and `texttospeech.googleapis.com` (Text-to-Speech):
+  ```bash
+  gcloud services enable aiplatform.googleapis.com speech.googleapis.com texttospeech.googleapis.com --project <your-gcp-project-id>
+  ```
+- Application Default Credentials for that project, so the app can call Vertex AI and Speech APIs locally:
+  ```bash
+  gcloud auth application-default login
+  gcloud auth application-default set-quota-project <your-gcp-project-id>
+  ```
+- A **PowerSync account** for real-time data syncing (optional — see [PowerSync Integration](#powersync-integration-optional))
 
 ## Environment Variables
 
@@ -57,12 +65,15 @@ To configure the environment for this demo, you need to set up the following var
 ```dotenv
 MONGODB_URI="<your-mongodb-connection-string>"
 DATABASE_NAME="car_assistant_demo"
+APP_NAME="devrel-demo-nextjs-vertexai-automotive"
 GCP_PROJECT_ID="<your-gcp-project-id>"
 GCP_LOCATION="us-central1"
 VERTEXAI_COMPLETIONS_MODEL="gemini-2.5-flash"
 VERTEXAI_EMBEDDINGS_MODEL="text-embedding-005"
 NEXT_PUBLIC_ENV="local"
 ```
+
+`APP_NAME` is passed as the MongoDB client's `appName` so Atlas can attribute traffic to this demo; it's optional; the value above is the default if unset.
 
 ## Run it Locally
 
@@ -92,10 +103,9 @@ NEXT_PUBLIC_ENV="local"
 
 ## Common Errors
 
-- Ensure you've created an `.env.local` file with valid API keys and environment variables.
-- Check that your MongoDB Atlas cluster is properly set up and accessible.
-- Verify that your Google Cloud Vertex AI and Speech-to-Text APIs are enabled.
 - **"consultManual" returns nothing / assistant can't give follow-up advice**: the `manual_vector_index` doesn't exist yet, or `manuals` is empty. Redo steps 2-3 of [Run it Locally](#run-it-locally).
+- **`PERMISSION_DENIED` calling Vertex AI or Speech APIs**: run `gcloud auth application-default login` for your GCP project, and confirm `aiplatform.googleapis.com`, `speech.googleapis.com`, and `texttospeech.googleapis.com` are enabled (see [Prerequisites](#prerequisites)).
+- **`MongoServerError` on connect**: check that `MONGODB_URI` in `.env.local` is correct and that your Atlas cluster's network access list includes your current IP.
 
 ## PowerSync Integration (Optional)
 
